@@ -322,9 +322,9 @@
 
         <tbody>
           <tr v-for="visita in visitas">
-            <th scope="row">{{ convertirFecha(visita.fecha) }}</th>
+            <th scope="row">{{ visita.fecha }}</th>
             <td>{{ visita.PDO }}</td>
-            <td>{{ visita.Usuario.toUpperCase() }}</td>
+            <td>{{ visita.Usuario }}</td>
             <td>{{ visita.MarcaEntrada }}</td>
             <td>{{ visita.MarcaSalida }}</td>
             <td>{{ visita.TiempoPermanenciaEstablecida }}</td>
