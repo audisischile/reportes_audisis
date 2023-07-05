@@ -8,7 +8,7 @@
       <div class="col-5">
         <div class="row">
           <div class="col-3">
-            <img src="../assets/Diseño sin título (22).png" class="logo">
+            <!-- <img src="../assets/Diseño sin título (22).png" class="logo"> -->
           </div>
           <div class="col">
             <div class="row">
