@@ -59,8 +59,9 @@
         </div>
       </div>
     </div>
+    <div>
 
-
+    </div>
     <div class="row justify-content-center mt-5">
       <div class="indicador-card card col-2 me-2 flex-fill shadow">
         <div class="body mt-1">
@@ -376,6 +377,7 @@
       </table>
     </div>
   </div>
+  {{ data.datosCobertura }}
 </template>
 
 <script setup>
@@ -417,6 +419,35 @@ const visitas = store.datosCobertura
 //   console.error(error);
 // });
 
+const data = ref([])
+const loading = ref(true)  
+
+
+const options = {
+    method: 'POST',
+    url: 'https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura',
+    headers: {
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "*"
+    },
+    data: {
+        id_cliente: 82,
+        fecha_inicio: '2023-04-01',
+        fecha_fin: '2023-04-01',
+        id_usuarios: [],
+        id_locales: [],
+        id_cadenas: []
+    }
+};
+
+axios.request(options).then(function (response) {
+    console.log(response.data);
+    data.value = response.data
+    loading.value = false
+}).catch(function (error) {
+    console.error(error);
+});
+
 
 // Manejo de fechas
 function convertirFecha(fecha) {
@@ -444,6 +475,14 @@ const indicadorPermanencia = (establecida, real) => {
     return '- ' + calculo
   }
 }
+
+const validarConsultaApi = () => {
+  if (visitas.length === 0) {
+    return false
+  } else {
+    return true
+  }
+} 
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
