@@ -15,48 +15,17 @@
                 Reporte cobertura
               </div>
               <div class="col-12 fecha-desde">
-                16/06/2023
+                04/01/2023
               </div>
               <div class="col-12 fecha-hasta">
-                Al 19/06/2023
+                Al 04/01/2023
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-7">
-        <div class="row">
-          <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example">
-              <option selected>Cadena</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example">
-              <option selected>PDO</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example">
-              <option selected>Usuario</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-          </div>
-          <div class="col-3">
-            <!-- <button class="btn btn-rango btn-sm" @click="displayRangoFechas">Seleccione fechas<i class="bi bi-calendar-range ms-2"></i></button> -->
-            <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
-          </div>
-        </div>
-      </div>
+      <ModuloFiltros />
     </div>
     <div>
 
@@ -211,11 +180,11 @@
 
     <div class="row mt-3">
       <div class="col-8">
-        <div class="card shadow">
+        <div class="card tabla-por-usuario shadow">
           <div class="card-body tabla-usuarios">
-            <table class="table table-hover table-sm">
+            <table class="table titulo-tabla table-hover table-striped table-sm">
               <thead>
-                <tr class="tabla-indices">
+                <tr class="tabla-indices" style="position: sticky; top:0;">
                   <th scope="col">Día</th>
                   <th scope="col">Usuario</th>
                   <th scope="col">Locales programados</th>
@@ -246,7 +215,7 @@
 
             <GraficoUsuarios />
 
-            
+
           </div>
         </div>
       </div>
@@ -254,7 +223,7 @@
 
 
     <div class="card mt-3 tabla-por-usuario shadow">
-      <table class="table titulo-tabla table-hover">
+      <table class="table titulo-tabla table-hover table-striped">
         <thead>
           <tr style="position: sticky; top:0;">
             <th scope="col">Día</th>
@@ -274,7 +243,7 @@
             <td>{{ item.Usuario }}</td>
             <td>{{ item.MarcaEntrada }}</td>
             <td>{{ item.MarcaSalida }}</td>
-            <td>{{ item.TiempoPermanenciaEstablecida }}</td>
+            <td>{{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
             <td class="table-success"><i class="bi bi-stopwatch"></i> {{ item.TiempoPermanenciaMinutos }}
               <span class="diferencia-positiva">{{ item.TiempoPermanenciaMinutos }}</span>
             </td>
@@ -294,40 +263,50 @@ import axios from 'axios';
 import Chart from 'chart.js/auto';
 import GraficoCobertura from '../components/GraficoCobertura.vue';
 import GraficoUsuarios from '../components/GraficoUsuarios.vue';
+import ModuloFiltros from '../components/ModuloFiltros.vue';
 
 export default {
   components: {
     GraficoCobertura,
-    GraficoUsuarios
+    GraficoUsuarios, 
+    ModuloFiltros
   },
-    setup() {
-        const apiResponse = ref(null);
-        const dataLoaded = ref(false);
-        
-        onMounted(async () => {
-            try {
-                const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-                    id_cliente: 82,
-                    fecha_inicio: "2023-01-04",
-                    fecha_fin: "2023-01-04",
-                    id_usuarios: [],
-                    id_locales: [],
-                    id_cadenas: []
-                });
-                apiResponse.value = JSON.parse(response.data.trim());
-                dataLoaded.value = true;
-                const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
-                const coberturaData = apiResponse.value.porcentaje_cadena.map(item => item.Cobertura_Programada_Mensual);
-                const permanenciaData = apiResponse.value.porcentaje_cadena.map(item => item.Permanencia_Programada_Mensual);
-                createChart(labels, coberturaData, permanenciaData);
-            }
-            catch (error) {
-                console.error("Error fetching data:", error);
-            }
+  setup() {
+    const apiResponse = ref(null);
+    const dataLoaded = ref(false);
+
+    onMounted(async () => {
+      try {
+        const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          id_cliente: 82,
+          fecha_inicio: "2023-01-04",
+          fecha_fin: "2023-01-04",
+          id_usuarios: [],
+          id_locales: [],
+          id_cadenas: []
         });
-        return { apiResponse, dataLoaded };
-    },
-    components: { GraficoCobertura }
+        apiResponse.value = JSON.parse(response.data.trim());
+        dataLoaded.value = true;
+        const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
+        const coberturaData = apiResponse.value.porcentaje_cadena.map(item => item.Cobertura_Programada_Mensual);
+        const permanenciaData = apiResponse.value.porcentaje_cadena.map(item => item.Permanencia_Programada_Mensual);
+        createChart(labels, coberturaData, permanenciaData);
+      }
+      catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    });
+    const formatMinutes = (minutes) => {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      if (remainingMinutes === 0) {
+        return `${hours}h`;
+      }
+      return `${hours}h ${remainingMinutes}m`;
+    };
+    return { apiResponse, dataLoaded, formatMinutes };
+  },
+  components: { GraficoCobertura }
 };
 </script>
 
@@ -444,6 +423,8 @@ export default {
 
 .tabla-indices {
   font-size: 10px;
+  background-color: white;
+  z-index: 1;
 }
 
 .tabla-fecha {
