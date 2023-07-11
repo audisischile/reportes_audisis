@@ -31,7 +31,17 @@
       </div>
 </template>
 
-<script setup>
+<script>
+
+export default {
+    name: 'ModuloFiltros',
+    setup(){
+        const datos = ref("gola")
+        return {
+            datos
+        }
+    }
+}
 
 </script>
 

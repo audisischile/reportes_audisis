@@ -1,18 +1,20 @@
 <template>
-    <div>
-        <h1>About</h1>
-        <p>This is an about page</p>
-        <GraficoUsuarios />
+    <div class="col-4" style="height: 100%;">
+        <div class="card full-height" style="overflow-y: auto;">
+            <div class="card-body">
+                <GraficoUsuarios :datosUsuarios="apiResponse.porcentaje_locales" />
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import GraficoUsuarios from '@/components/GraficoUsuarios.vue';
+import { defineProps } from 'vue'
+import GraficoUsuarios from '@/components/GraficoUsuarios.vue'
+
 
 
 
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

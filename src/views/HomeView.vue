@@ -15,159 +15,177 @@
                 Reporte cobertura
               </div>
               <div class="col-12 fecha-desde">
-                04/01/2023
-              </div>
-              <div class="col-12 fecha-hasta">
-                Al 04/01/2023
+                {{ dateInicio ? formatFecha(dateInicio) : formatFecha(fechaHoy) }} - {{ dateFin ? formatFecha(dateFin) :
+                  formatFecha(fechaHoy) }}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <ModuloFiltros />
+      <div class="col-7">
+        <div class="row">
+          <div class="col-5">
+            <div class="col">
+              <label for="datepicker">Seleccione fecha inicio:</label>
+              <VueDatePicker v-model="dateInicio" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
+                selectText="Seleccionar" :format="formatDesde"></VueDatePicker>
+            </div>
+          </div>
+          <div class="col-5">
+            <div class="col">
+              <label for="datepicker">Selecciona fecha de fin:</label>
+              <VueDatePicker v-model="dateFin" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
+                selectText="Seleccionar" :format="formatHasta"></VueDatePicker>
+            </div>
+          </div>
+          <div class="col-5 mt-2">
+            <button class="btn btn-rango btn-sm" @click="filtrarFechas">Filtrar<i
+                class="bi bi-calendar-range ms-2"></i></button>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-3">
+            <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida">
+              <option selected value="[]" placeholder="Cadena">Cadena</option>
+              <option v-for="item in cadenas" :value="item">{{ item }}</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <select class="form-select filtros" aria-label="Default select example">
+              <option selected>PDO</option>
+              <option v-for="item in PDOFiltrado" value="1">{{ item.PDO }}</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <select class="form-select filtros" aria-label="Default select example">
+              <option selected>Usuario</option>
+              <option v-for="item in UsuarioFiltrado" value="1">{{ item.Usuario }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
     </div>
     <div>
-
-    </div>
-    <div class="row justify-content-center mt-5">
-      <div class="indicador-card card col-2 me-2 flex-fill shadow">
-        <div class="body mt-1">
-          <div><span class="indicador-texto">Locales programados</span></div>
-          <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_programadas }}</span></div>
-        </div>
-      </div>
-      <div class="indicador-card card col-2 me-2 flex-fill shadow">
-        <div class="body mt-1">
-          <div><span class="indicador-texto">Locales completados</span></div>
-          <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_completados }}</span></div>
-        </div>
-      </div>
-      <div class="indicador-card card col-2 me-2 flex-fill shadow">
-        <div class="body mt-1">
-          <div><span class="indicador-texto">Locales iniciados</span></div>
-          <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_iniciados }}</span></div>
-        </div>
-      </div>
-      <div class="indicador-card card col-2 me-2 flex-fill shadow">
-        <div class="body mt-1">
-          <div><span class="indicador-texto">Locales pendientes</span></div>
-          <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_pendientes }}</span></div>
-        </div>
-      </div>
     </div>
 
-    <div class="card contenedor mt-4 shadow">
-      <div class="row">
-        <div class="col-3 align-self-start mt-5">
-          <div class="kpi-cobertura">
-            <div class="kpi-cobertura-titulo">
-              % Cobertura
-            </div>
-            <div class="row">
-              <div class="col-6 kpi-cobertura-num-grande">{{
-                apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}%</div>
-              <div class="col-6 kpi-cobertura-num-chico align-self-center"><i
-                  class="bi bi-arrow-up-circle flecha-arriba"></i>
-                <span class="flecha"> 12%</span>
-              </div>
-            </div>
-            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
-              aria-valuemax="100" style="height: 10px;">
-              <div class="progress-bar" style="width: 60%; background-color: rgb(63, 121, 229);"></div>
-            </div>
-          </div>
-          <div class="kpi-cobertura mt-5">
-            <div class="kpi-cobertura-titulo">
-              % Permanencia
-            </div>
-            <div class="row">
-              <div class="col-6 kpi-cobertura-num-grande">{{
-                apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual }}%</div>
-              <div class="col-6 kpi-cobertura-num-chico align-self-center"><i
-                  class="bi bi-arrow-down-circle flecha-abajo"></i>
-                <span class="flecha"> 12%</span>
-              </div>
-            </div>
-            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
-              aria-valuemax="100" style="height: 10px;">
-              <div class="progress-bar" style="width: 74%; background-color: rgb(10, 193, 156);"></div>
-            </div>
+    <div class="dataDisplay" v-if="dataReloaded && apiResponse">
+      <div class="row justify-content-center mt-5">
+        <div class="indicador-card card col-2 me-2 flex-fill shadow">
+          <div class="body mt-1">
+            <div><span class="indicador-texto">Locales programados</span></div>
+            <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_programadas }}</span></div>
           </div>
         </div>
+        <div class="indicador-card card col-2 me-2 flex-fill shadow">
+          <div class="body mt-1">
+            <div><span class="indicador-texto">Locales completados</span></div>
+            <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_completados }}</span></div>
+          </div>
+        </div>
+        <div class="indicador-card card col-2 me-2 flex-fill shadow">
+          <div class="body mt-1">
+            <div><span class="indicador-texto">Locales iniciados</span></div>
+            <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_iniciados }}</span></div>
+          </div>
+        </div>
+        <div class="indicador-card card col-2 me-2 flex-fill shadow">
+          <div class="body mt-1">
+            <div><span class="indicador-texto">Locales pendientes</span></div>
+            <div><span class="indicador-numero">{{ apiResponse.usuario_local[0].locales_pendientes }}</span></div>
+          </div>
+        </div>
+      </div>
 
-        <div class="col">
-          <div class="">
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-                  role="tab" aria-controls="home" aria-selected="true">Cadena</button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                  role="tab" aria-controls="profile" aria-selected="false">Zona</button>
-              </li>
-            </ul>
-            <div class="tab-content mt-2" id="myTabContent">
-              <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                <div class="row">
-                  <div class="col-6">
+      <div class="card contenedor mt-4 shadow">
+        <div class="row">
+          <div class="col-3 align-self-start mt-5">
+            <div class="kpi-cobertura">
+              <div class="kpi-cobertura-titulo">
+                % Cobertura
+              </div>
+              <div class="row">
+                <div class="col-6 kpi-cobertura-num-grande">{{
+                  apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}%</div>
+                <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;"><i
+                    class="bi bi-arrow-up-circle flecha-arriba"></i>
+                  <span class="flecha"> 12%</span>
+                </div>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
+                aria-valuemax="100" style="height: 10px;">
+                <div class="progress-bar" :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual + '%', backgroundColor: 'rgb(63, 121, 229)' }"></div>
 
-                    <!-- Grafico Cobertura -->
-                    <GraficoCobertura />
+              </div>
+            </div>
+            <div class="kpi-cobertura mt-5">
+              <div class="kpi-cobertura-titulo">
+                % Permanencia
+              </div>
+              <div class="row">
+                <div class="col-6 kpi-cobertura-num-grande">{{
+                  apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual }}%</div>
+                <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;"><i
+                    class="bi bi-arrow-down-circle flecha-abajo"></i>
+                  <span class="flecha"> 12%</span>
+                </div>
+              </div>
+              <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
+                aria-valuemax="100" style="height: 10px;">
+                <div class="progress-bar" :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual + '%', backgroundColor: 'rgb(10, 193, 156)' }"></div>
 
-                  </div>
-                  <div class="col-6">
-                    <div class="card caja">
-                      <div class="card-body">
-                        <div class="card-title">Cobertura mensual por cadena</div>
-                        <hr>
-                        <div class="card-text texto-interno" v-for="item in apiResponse.porcentaje_cadena">
-                          <div class="row align-items-center">
-                            <div class="col-2">
-                              <img :src="item.Logo_cadena" style="width: 45px;">
-                            </div>
-                            <div class="col-4">
-                              <div>{{ item.NombreCadenaReal }}</div>
-                              <div class="texto-pequeño">Bajada de texto</div>
-                            </div>
-                            <div class="col-3">{{ item.Porcentaje_Cobertura_Mensual }}%</div>
-                            <div class="col-3 kpi-cobertura-num-chico align-self-center">
-                              <i class="bi bi-arrow-up-circle flecha-arriba"></i> <span class="flecha"> 42%</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
+                    role="tab" aria-controls="home" aria-selected="true">Gráfico</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
+                    role="tab" aria-controls="profile" aria-selected="false">Datos</button>
+                </li>
+              </ul>
+              <div class="tab-content mt-2" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                  <div class="row">
+                    <div class="col-12" style="height: 250px;">
+
+                      <!-- Grafico Cobertura -->
+                      <GraficoCobertura />
+
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                <div class="row">
-                  <div class="col-6">
-                    <GraficoCobertura />
-                  </div>
-                  <div class="col-6">
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                  <div class="col-12">
                     <div class="card caja">
                       <div class="card-body">
-                        <div class="card-title">Cobertura mensual por Zona</div>
-                        <hr>
-                        <div class="card-text texto-interno" v-for="item in apiResponse.porcentaje_cadena">
-                          <div class="row align-items-center">
-                            <div class="col-2">
-                              <img :src="item.Logo_cadena" style="width: 45px;">
-                            </div>
-                            <div class="col-4">
-                              <div>{{ item.NombreCadenaReal }}</div>
-                              <div class="texto-pequeño">Bajada de texto</div>
-                            </div>
-                            <div class="col-3">{{ item.Porcentaje_Permanencia_Mensual }}%</div>
-                            <div class="col-3 kpi-cobertura-num-chico align-self-center">
-                              <i class="bi bi-arrow-up-circle flecha-arriba"></i> <span class="flecha"> 42%</span>
-                            </div>
-                          </div>
-                        </div>
+                        <div class="card-title"><i class="bi bi-info-circle"></i> DATOS DEL PERIODO</div>
+                        <table class="table tabla-datos-periodo">
+                          <thead>
+                            <tr>
+                              <th scope="col"></th>
+                              <th scope="col">Cadena</th>
+                              <th scope="col">Cobertura</th>
+                              <th scope="col">Permanencia</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="item in apiResponse.porcentaje_cadena">
+                              <th scope="row"><img :src="item.Logo_cadena" style="width: 45px;"></th>
+                              <td>{{ item.NombreCadenaReal }}</td>
+                              <td>{{ item.Porcentaje_Cobertura_Mensual }}%</td>
+                              <td>{{ item.Porcentaje_Permanencia_Mensual }}%</td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
+
                     </div>
                   </div>
                 </div>
@@ -176,111 +194,169 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="row mt-3">
-      <div class="col-8">
-        <div class="card tabla-por-usuario shadow">
-          <div class="card-body tabla-usuarios">
-            <table class="table titulo-tabla table-hover table-striped table-sm">
-              <thead>
-                <tr class="tabla-indices" style="position: sticky; top:0;">
-                  <th scope="col">Día</th>
-                  <th scope="col">Usuario</th>
-                  <th scope="col">Locales programados</th>
-                  <th scope="col">Locales completados</th>
-                  <th scope="col">Locales iniciados</th>
-                  <th scope="col">Pendientes</th>
-                </tr>
-              </thead>
-
-              <tbody class="tabla-data">
-                <tr v-for="item in apiResponse.porcentaje_locales">
-                  <th scope="row" class="">{{ item.Fecha }}</th>
-                  <td>{{ item.Usuario }}</td>
-                  <td>{{ item.locales_programadas }}</td>
-                  <td>{{ item.locales_completados }}</td>
-                  <td>{{ item.locales_iniciados }}</td>
-                  <td class="table-danger">{{ item.locales_pendientes }}</td>
-                </tr>
-              </tbody>
-            </table>
+      <div class="row mt-3">
+        <div class="col-8">
+          <div class="card tabla-por-usuario shadow">
+            <div class="card-body tabla-usuarios">
+              <h6 class="card-subtitle mb-2 text-body-secondary"><i class="bi bi-info-circle"></i> DETALLE POR USUARIO
+              </h6>
+              <table class="table titulo-tabla table-hover table-striped table-sm">
+                <thead style="">
+                  <tr class="tabla-indices">
+                    <th scope="col">Día</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Locales programados</th>
+                    <th scope="col">Locales completados</th>
+                    <th scope="col">Locales iniciados</th>
+                    <th scope="col">Pendientes</th>
+                  </tr>
+                </thead>
+                <tbody class="tabla-data">
+                  <tr v-for="item in apiResponse.porcentaje_locales">
+                    <th scope="row" class="">{{ item.Fecha }}</th>
+                    <td>{{ item.Usuario }}</td>
+                    <td>{{ item.locales_programadas }}</td>
+                    <td>{{ item.locales_completados }}</td>
+                    <td>{{ item.locales_iniciados }}</td>
+                    <td class="table-danger">{{ item.locales_pendientes }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="card" style="overflow-y: auto; height: 100%;">
+            <div class="card-body">
+              <GraficoUsuarios :datosUsuarios="apiResponse.porcentaje_locales" />
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-4">
-        <div class="card">
-          <div class="card body">
-            <!-- Grafico de usuarios -->
-
-            <GraficoUsuarios />
 
 
-          </div>
-        </div>
+      <div class="card mt-3 tabla-por-usuario shadow">
+        <h6 class="card-subtitle text-body-secondary titulo-por-usuario"><i class="bi bi-info-circle"></i> DETALLE POR
+          USUARIO</h6>
+        <table class="table titulo-tabla table-hover table-striped">
+          <thead>
+            <tr style="position: sticky; top:0;">
+              <th scope="col">Día</th>
+              <th scope="col">PDO</th>
+              <th scope="col">Usuario</th>
+              <th scope="col">MarcaEntrada</th>
+              <th scope="col">MarcaSalida</th>
+              <th scope="col">Permanencia Establecida</th>
+              <th scope="col">Permanencia Real</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="item in apiResponse.Detalle_Total">
+              <th scope="row">{{ item.fecha }}</th>
+              <td>{{ item.PDO }}</td>
+              <td>{{ item.Usuario }}</td>
+              <td>{{ item.MarcaEntrada }}</td>
+              <td>{{ item.MarcaSalida }}</td>
+              <td>{{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
+              <td class="table-success"><i class="bi bi-stopwatch"></i> {{ item.TiempoPermanenciaMinutos }}
+                <!-- <span class="diferencia-positiva">{{ item.TiempoPermanenciaMinutos }}</span> -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-
-
-    <div class="card mt-3 tabla-por-usuario shadow">
-      <table class="table titulo-tabla table-hover table-striped">
-        <thead>
-          <tr style="position: sticky; top:0;">
-            <th scope="col">Día</th>
-            <th scope="col">PDO</th>
-            <th scope="col">Usuario</th>
-            <th scope="col">MarcaEntrada</th>
-            <th scope="col">MarcaSalida</th>
-            <th scope="col">Permanencia Establecida</th>
-            <th scope="col">Permanencia Real</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr v-for="item in apiResponse.Detalle_Total">
-            <th scope="row">{{ item.fecha }}</th>
-            <td>{{ item.PDO }}</td>
-            <td>{{ item.Usuario }}</td>
-            <td>{{ item.MarcaEntrada }}</td>
-            <td>{{ item.MarcaSalida }}</td>
-            <td>{{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
-            <td class="table-success"><i class="bi bi-stopwatch"></i> {{ item.TiempoPermanenciaMinutos }}
-              <span class="diferencia-positiva">{{ item.TiempoPermanenciaMinutos }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="container" v-else-if="!dataReloaded">
+      <div class="d-flex align-items-center justify-content-center mt-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando página...</span>
+      </div>
+      <h4 class="ms-3">Cargando datos del periodo...</h4>
+    </div>
     </div>
   </div>
+
   <div class="container" v-else>
-    Loading...
+    <div class="d-flex align-items-center justify-content-center mt-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando página...</span>
+      </div>
+      <h4 class="ms-3">Cargando datos del cliente...</h4>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 import GraficoCobertura from '../components/GraficoCobertura.vue';
 import GraficoUsuarios from '../components/GraficoUsuarios.vue';
-import ModuloFiltros from '../components/ModuloFiltros.vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
+
 
 export default {
   components: {
     GraficoCobertura,
-    GraficoUsuarios, 
-    ModuloFiltros
+    GraficoUsuarios,
+    VueDatePicker
   },
   setup() {
     const apiResponse = ref(null);
     const dataLoaded = ref(false);
+    const cadenas = ref([]);
+    const cadenaElegida = ref([]);
+    const PDOElegido = ref([]);
+    const dateInicio = ref(null);
+    const dateFin = ref(null);
+    const fechaHoy = ref(new Date());
+    const dataReloaded = ref(true);
+    const clientId = ref(null);
+
+    const formatDesde = (date) => {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `Eligió desde el  ${day}/${month}/${year}`;
+    }
+
+    const formatHasta = (date) => {
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+
+      return `Eligió hasta el ${day}/${month}/${year}`;
+    }
+
+    //escribe una función que convierta este formato "Tue Jul 11 2023 14:06:45 GMT-0400 (hora estándar de Chile)" a DD/MM/YYYY
+    const formatFecha = (fecha) => {
+      const fechaFormateada = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+      return fechaFormateada;
+    }
+
+    //escribe una función que convierta este formato "Tue Jul 11 2023 14:06:45 GMT-0400 (hora estándar de Chile)" a YYYY-MM-DD S
+    const formatFechaSQL = (fecha) => {
+      const year = fecha.getFullYear();
+      const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+      const day = fecha.getDate().toString().padStart(2, '0');
+      const fechaFormateada = `${year}-${month}-${day}`;
+      return fechaFormateada;
+    };
+
+
 
     onMounted(async () => {
+      const config = JSON.parse(this.$el.dataset.config)
+      clienteId.value = config.clienteId;
       try {
         const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-          id_cliente: 82,
-          fecha_inicio: "2023-01-04",
-          fecha_fin: "2023-01-04",
+          id_cliente: clienteId.value,
+          fecha_inicio: formatFechaSQL(new Date()),
+          fecha_fin: formatFechaSQL(new Date()),
           id_usuarios: [],
           id_locales: [],
           id_cadenas: []
@@ -288,9 +364,12 @@ export default {
         apiResponse.value = JSON.parse(response.data.trim());
         dataLoaded.value = true;
         const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
+        cadenas.value = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
         const coberturaData = apiResponse.value.porcentaje_cadena.map(item => item.Cobertura_Programada_Mensual);
         const permanenciaData = apiResponse.value.porcentaje_cadena.map(item => item.Permanencia_Programada_Mensual);
         createChart(labels, coberturaData, permanenciaData);
+        dateInicio.value = new Date();
+        dateFin.value = new Date();
       }
       catch (error) {
         console.error("Error fetching data:", error);
@@ -304,10 +383,77 @@ export default {
       }
       return `${hours}h ${remainingMinutes}m`;
     };
-    return { apiResponse, dataLoaded, formatMinutes };
+
+    const PDOFiltrado = computed(() => {
+      if (cadenaElegida.value.length === 0) {
+        return apiResponse.value.Detalle_Total;
+      } else {
+        return apiResponse.value.Detalle_Total.filter(item => item.NombreCadena === cadenaElegida.value);
+      }
+    })
+
+    const UsuarioFiltrado = computed(() => {
+      if (cadenaElegida.value.length === 0 && PDOElegido.value.length === 0) {
+        return apiResponse.value.Detalle_Total;
+      } else if (cadenaElegida.value.length !== 0) {
+        return apiResponse.value.Detalle_Total.filter(item => item.NombreCadena === cadenaElegida.value);
+      } else if (PDOElegido.value.length !== 0) {
+        return apiResponse.value.Detalle_Total.filter(item => item.PDO === PDOElegido.value);
+      } else {
+        return apiResponse.value.Detalle_Total.filter(item => item.NombreCadena === cadenaElegida.value && item.PDO === PDOElegido.value);
+      }
+    })
+
+    //escribe una funcion que evalue en watch si dateInicio.value y dateFin.value son distintos a fechaHoy.value, si son distintos, que se ejecute un console log
+    const watchDate = () => {
+      if (dateInicio.value !== fechaHoy.value || dateFin.value !== fechaHoy.value) {
+        console.log("Se ejecutó el watch");
+      }
+    }
+
+    const filtrarFechas = async () => {
+      dataReloaded.value = false;
+      if (dateInicio.value == null || dateFin.value == null) {
+        console.log("Nulos");
+      } else {
+        console.log(formatFechaSQL(dateInicio.value));
+        console.log(formatFechaSQL(dateInicio.value));
+
+        try {
+          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+            id_cliente: 82,
+            fecha_inicio: formatFechaSQL(dateInicio.value),
+            fecha_fin: formatFechaSQL(dateFin.value),
+            id_usuarios: [],
+            id_locales: [],
+            id_cadenas: []
+          });
+          apiResponse.value = JSON.parse(response.data.trim());
+          dataReloaded.value = true;
+          const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
+          cadenas.value = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
+          const coberturaData = apiResponse.value.porcentaje_cadena.map(item => item.Cobertura_Programada_Mensual);
+          const permanenciaData = apiResponse.value.porcentaje_cadena.map(item => item.Permanencia_Programada_Mensual);
+          createChart(labels, coberturaData, permanenciaData);
+          dateInicio.value = new Date();
+          dateFin.value = new Date();
+        }
+        catch (error) {
+          console.error("Error fetching data:", error);
+        }
+
+
+
+      }
+
+    }
+
+
+
+    return { apiResponse, clientId , dataLoaded, formatMinutes, cadenas, cadenaElegida, PDOFiltrado, UsuarioFiltrado, PDOElegido, dateInicio, dateFin, fechaHoy, formatFecha, formatDesde, formatHasta, filtrarFechas, dataReloaded };
   },
-  components: { GraficoCobertura }
 };
+
 </script>
 
 
@@ -331,7 +477,7 @@ export default {
 }
 
 .btn-rango {
-  background-color: #8BA8CF;
+  background-color: #e4e4e4;
 }
 
 .indicador-card {
@@ -401,7 +547,7 @@ export default {
 .form-select,
 .form-control {
   width: 150px;
-  background-color: #8ba8cf;
+  background-color: #e4e4e4;
   color: #383838;
   font-size: 12px;
 
@@ -464,5 +610,16 @@ export default {
 .tabla-por-usuario {
   max-height: 400px;
   overflow-y: auto
+}
+
+.titulo-por-usuario {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 13px;
+  margin-left: 10px;
+}
+
+.tabla-datos-periodo {
+  font-size: 14px;
 }
 </style>
