@@ -316,6 +316,7 @@ export default {
     const dataReloaded = ref(true);
     const clientId = ref(null);
 
+
     const formatDesde = (date) => {
       const day = date.getDate();
       const month = date.getMonth() + 1;
@@ -350,11 +351,9 @@ export default {
 
 
     onMounted(async () => {
-      const config = JSON.parse(this.$el.dataset.config)
-      clienteId.value = config.clienteId;
       try {
         const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-          id_cliente: clienteId.value,
+          id_cliente: 82,
           fecha_inicio: formatFechaSQL(new Date()),
           fecha_fin: formatFechaSQL(new Date()),
           id_usuarios: [],
@@ -450,7 +449,7 @@ export default {
 
 
 
-    return { apiResponse, clientId , dataLoaded, formatMinutes, cadenas, cadenaElegida, PDOFiltrado, UsuarioFiltrado, PDOElegido, dateInicio, dateFin, fechaHoy, formatFecha, formatDesde, formatHasta, filtrarFechas, dataReloaded };
+    return { apiResponse, dataLoaded, formatMinutes, cadenas, cadenaElegida, PDOFiltrado, UsuarioFiltrado, PDOElegido, dateInicio, dateFin, fechaHoy, formatFecha, formatDesde, formatHasta, filtrarFechas, dataReloaded };
   },
 };
 
