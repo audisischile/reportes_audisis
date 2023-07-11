@@ -7,7 +7,8 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: HomeView,
+      props: (route) => ({ clientId: route.query.Id_cliente })
     },
     {
       path: '/about',

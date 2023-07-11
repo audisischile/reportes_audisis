@@ -1,7 +1,7 @@
 <template>
   <div class="container" v-if="dataLoaded && apiResponse">
     <div class="breadcrum mb-2 mt-2">
-      Inicio / Cobertura / Cliente de prueba
+      Inicio / Cobertura / {{ clientId }}
     </div>
     <div class="row mt-5">
       <div class="col-5">
@@ -298,6 +298,12 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
 
 export default {
+  props: {
+    clientId: {
+      type: Number,
+      required: true
+    }
+  },
   components: {
     GraficoCobertura,
     GraficoUsuarios,
@@ -350,12 +356,7 @@ export default {
 
 
     onMounted(async () => {
-      const config = JSON.parse(this.$el.dataset.config)
-      clienteId.value = config.clienteId;
-
       try {
-        const config = JSON.parse(this.$el.dataset.config)
-        clienteId.value = config.clienteId
         const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
           id_cliente: 82,
           fecha_inicio: formatFechaSQL(new Date()),
