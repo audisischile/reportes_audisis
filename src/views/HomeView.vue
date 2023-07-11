@@ -143,11 +143,11 @@
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                   <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-                    role="tab" aria-controls="home" aria-selected="true">Gráfico</button>
+                    role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-info-circle"></i> Gráfico</button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                    role="tab" aria-controls="profile" aria-selected="false">Datos</button>
+                    role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-info-circle"></i> DATOS DEL PERIODO</button>
                 </li>
               </ul>
               <div class="tab-content mt-2" id="myTabContent">
@@ -165,7 +165,6 @@
                   <div class="col-12">
                     <div class="card caja">
                       <div class="card-body">
-                        <div class="card-title"><i class="bi bi-info-circle"></i> DATOS DEL PERIODO</div>
                         <table class="table tabla-datos-periodo">
                           <thead>
                             <tr>
@@ -351,7 +350,12 @@ export default {
 
 
     onMounted(async () => {
+      const config = JSON.parse(this.$el.dataset.config)
+      clienteId.value = config.clienteId;
+
       try {
+        const config = JSON.parse(this.$el.dataset.config)
+        clienteId.value = config.clienteId
         const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
           id_cliente: 82,
           fecha_inicio: formatFechaSQL(new Date()),
