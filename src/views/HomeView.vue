@@ -1,8 +1,5 @@
 <template>
   <div class="container" v-if="dataLoaded && apiResponse">
-    <!-- <div class="breadcrum mb-2 mt-2">
-      Inicio / Cobertura / ID de cliente: {{ clientId }}
-    </div> -->
     <div class="row mt-5">
       <div class="col-5">
         <div class="row">
@@ -44,7 +41,7 @@
                 class="bi bi-calendar-range ms-2"></i></button>
           </div>
         </div>
-        <div class="row mt-3">
+        <div class="row mt-3" style="margin-left: 0px;">
           <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida">
             <option selected value="">Cadena</option>
             <option v-for="item in cadenas" :value="item">{{ item }}</option>
@@ -95,6 +92,8 @@
         </div>
       </div>
 
+      <!-- <IndicadoresGlobales :apiResponse="apiResponse" /> -->
+
       <div class="card contenedor mt-4 shadow">
         <div class="row">
           <div class="col-3 align-self-start mt-5">
@@ -103,8 +102,7 @@
                 % Cobertura
               </div>
               <div class="row">
-                <div class="col-6 kpi-cobertura-num-grande">{{
-                  apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}%</div>
+                <div class="col-6 kpi-cobertura-num-grande">{{ apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}%</div>
                 <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;"><i
                     class="bi bi-arrow-up-circle flecha-arriba"></i>
                   <span class="flecha"> 12%</span>
@@ -140,17 +138,18 @@
             </div>
           </div>
 
-          <div class="col">
+          <div class="col-9">
             <div class="">
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-                    role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-info-circle"></i>
-                    Gráfico</button>
+                  <button class="nav-link active titulo-graficos-globales" id="home-tab" data-bs-toggle="tab"
+                    data-bs-target="#home" type="button" role="tab" aria-controls="home"
+                    aria-selected="true">Gráfico</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                    role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-info-circle"></i> DATOS DEL
+                  <button class="nav-link titulo-graficos-globales" id="profile-tab" data-bs-toggle="tab"
+                    data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">DATOS
+                    DEL
                     PERIODO</button>
                 </li>
               </ul>
@@ -199,36 +198,37 @@
       </div>
 
       <div class="row mt-3">
-        <div class="col-8">
-          <div class="card tabla-por-usuario shadow">
-            <div class="card-body tabla-usuarios">
-              <h6 class="card-subtitle mb-2 text-body-secondary"><i class="bi bi-info-circle"></i> COBERTURA POR USUARIO
-              </h6>
-              <table class="table titulo-tabla table-hover table-striped table-sm">
-                <thead style="">
-                  <tr class="tabla-indices">
-                    <th scope="col">Día</th>
-                    <th scope="col">Usuario</th>
-                    <th scope="col">Locales programados</th>
-                    <th scope="col">Locales completados</th>
-                    <th scope="col">Locales iniciados</th>
-                    <th scope="col">Pendientes</th>
-                  </tr>
-                </thead>
-                <tbody class="tabla-data">
-                  <tr v-for="item in apiResponse.porcentaje_locales">
-                    <th scope="row" class="">{{ item.Fecha }}</th>
-                    <td>{{ item.Usuario }}</td>
-                    <td>{{ item.locales_programadas }}</td>
-                    <td>{{ item.locales_completados }}</td>
-                    <td>{{ item.locales_iniciados }}</td>
-                    <td class="table-danger">{{ item.locales_pendientes }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+        <div class="card col-8 mt-3 tabla-por-usuario shadow mb-4">
+          <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top"><i class="bi bi-info-circle"></i>
+            PERMANENCIA POR LOCAL</h6>
+          <div class="table-responsive">
+            <table class="table titulo-tabla table-hover table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="sticky-top">Día</th>
+                  <th scope="col" class="sticky-top">Usuario</th>
+                  <th scope="col" class="sticky-top">Locales programados</th>
+                  <th scope="col" class="sticky-top">Locales completados</th>
+                  <th scope="col" class="sticky-top">Locales iniciados</th>
+                  <th scope="col" class="sticky-top">Pendientes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in apiResponse.porcentaje_locales">
+                  <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{
+                    item.Fecha }}</td>
+                  <td>{{ item.Usuario }}</td>
+                  <td>{{ item.locales_programadas }}</td>
+                  <td>{{ item.locales_completados !== 0 ? item.locales_completados : '-' }}</td>
+                  <td>{{ item.locales_iniciados !== 0 ? items.locales_iniciados : '-' }}</td>
+                  <td :class="{ 'table-danger': item.locales_pendientes > 0 }">{{ item.locales_pendientes !== 0 ? item.locales_pendientes : '-'}}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+
+
         <div class="col-4">
           <div class="card" style="overflow-y: auto; height: 100%;">
             <div class="card-body">
@@ -239,36 +239,39 @@
       </div>
 
 
-      <div class="card mt-3 tabla-por-usuario shadow mb-4">
-        <h6 class="card-subtitle text-body-secondary titulo-por-usuario"><i class="bi bi-info-circle"></i>PERMANENCIA POR LOCAL</h6>
-        <table class="table titulo-tabla table-hover table-striped">
-          <thead>
-            <tr style="position: sticky; top:0;">
-              <th scope="col">Día</th>
-              <th scope="col">PDO</th>
-              <th scope="col">Usuario</th>
-              <th scope="col">MarcaEntrada</th>
-              <th scope="col">MarcaSalida</th>
-              <th scope="col">Permanencia Establecida</th>
-              <th scope="col">Permanencia Real</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr v-for="item in apiResponse.Detalle_Total">
-              <th scope="row">{{ item.fecha }}</th>
-              <td>{{ item.PDO }}</td>
-              <td>{{ item.Usuario }}</td>
-              <td>{{ item.MarcaEntrada }}</td>
-              <td>{{ item.MarcaSalida }}</td>
-              <td>{{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
-              <td class="table-success"><i class="bi bi-stopwatch"></i> {{ item.TiempoPermanenciaMinutos }}
-                <!-- <span class="diferencia-positiva">{{ item.TiempoPermanenciaMinutos }}</span> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="card tabla-por-usuario shadow">
+        <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top"><i class="bi bi-info-circle"></i>
+          PERMANENCIA POR LOCAL</h6>
+        <div class="table-responsive">
+          <table class="table titulo-tabla table-hover table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="sticky-top">Día</th>
+                <th scope="col" class="sticky-top">PDO</th>
+                <th scope="col" class="sticky-top">Usuario</th>
+                <th scope="col" class="sticky-top">MarcaEntrada</th>
+                <th scope="col" class="sticky-top">MarcaSalida</th>
+                <th scope="col" class="sticky-top">Permanencia Establecida</th>
+                <th scope="col" class="sticky-top">Permanencia Real</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in apiResponse.Detalle_Total">
+                <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{
+                  item.fecha }}</td>
+                <td>{{ item.PDO }}</td>
+                <td>{{ item.Usuario }}</td>
+                <td>{{ item.MarcaEntrada }}</td>
+                <td>{{ item.MarcaSalida }}</td>
+                <td><i class="bi bi-stopwatch"></i> {{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
+                <td class="table-success"><i class="bi bi-stopwatch"></i> {{ formatMinutes(item.TiempoPermanenciaMinutos)
+                }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+
     </div>
     <div class="container" v-else-if="!dataReloaded">
       <div class="d-flex align-items-center justify-content-center mt-5">
@@ -298,6 +301,8 @@ import GraficoCobertura from '../components/GraficoCobertura.vue';
 import GraficoUsuarios from '../components/GraficoUsuarios.vue';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import { useTestData } from '../stores/testdata.js'
+import IndicadoresGlobales from '../components/IndicadoresGlobales.vue';
 
 
 export default {
@@ -310,7 +315,8 @@ export default {
   components: {
     GraficoCobertura,
     GraficoUsuarios,
-    VueDatePicker
+    VueDatePicker,
+    IndicadoresGlobales,
   },
   setup(props) {
     const apiResponse = ref(null);
@@ -324,13 +330,18 @@ export default {
     const dataReloaded = ref(true);
     const clientId = ref(props.clientId);
 
+    //Configuración de modo de pruebas locales
+    const debbugMode = ref(true);
+    const delayLoading = ref(1000);
+
+    const store = useTestData();
 
     const formatDesde = (date) => {
       const day = date.getDate();
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `Eligió desde el  ${day}/${month}/${year}`;
+      return `${day}/${month}/${year}`;
     }
 
     const formatHasta = (date) => {
@@ -338,7 +349,7 @@ export default {
       const month = date.getMonth() + 1;
       const year = date.getFullYear();
 
-      return `Eligió hasta el ${day}/${month}/${year}`;
+      return `${day}/${month}/${year}`;
     }
 
     //escribe una función que convierta este formato "Tue Jul 11 2023 14:06:45 GMT-0400 (hora estándar de Chile)" a DD/MM/YYYY
@@ -360,19 +371,22 @@ export default {
 
     onMounted(async () => {
       try {
-        const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-          id_cliente: clientId.value,
-          fecha_inicio: formatFechaSQL(new Date()),
-          fecha_fin: formatFechaSQL(new Date()),
-          id_usuarios: [],
-          id_locales: [],
-          id_cadenas: []
-        });
+        if (debbugMode.value) {
+          await new Promise(resolve => setTimeout(resolve, delayLoading.value));
+          apiResponse.value = store.datosCobertura
+        } else {
+          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+            id_cliente: clientId.value,
+            fecha_inicio: formatFechaSQL(new Date()),
+            fecha_fin: formatFechaSQL(new Date()),
+            id_usuarios: [],
+            id_locales: [],
+            id_cadenas: []
+          });
 
-        console.log("respuesta", response)
-        console.log("respuesta.data", response.data)
+          apiResponse.value = JSON.parse(response.data.trim());
+        }
 
-        apiResponse.value = JSON.parse(response.data.trim());
         dataLoaded.value = true;
         const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
         cadenas.value = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
@@ -459,6 +473,10 @@ export default {
 
     }
 
+    const displayUnDecimal = (numero) => {
+      return numero.toFixed(1);
+    }
+
 
 
     return {
@@ -478,7 +496,8 @@ export default {
       formatHasta,
       filtrarFechas,
       dataReloaded,
-      clientId
+      clientId, 
+      displayUnDecimal
     };
   },
 };
@@ -487,6 +506,12 @@ export default {
 
 
 <style scoped>
+.titulo-graficos-globales {
+  font-size: 12px;
+  color: rgb(136, 136, 136);
+  text-transform: uppercase;
+}
+
 .logo {
   width: 100px;
 }
@@ -597,7 +622,7 @@ export default {
 }
 
 .tabla-indices {
-  font-size: 10px;
+  font-size: 12px;
   background-color: white;
   z-index: 1;
 }
@@ -628,7 +653,7 @@ export default {
 }
 
 .titulo-tabla {
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .tabla-usuarios {
@@ -637,7 +662,7 @@ export default {
 }
 
 .tabla-por-usuario {
-  max-height: 400px;
+  max-height: 390px;
   overflow-y: auto
 }
 
