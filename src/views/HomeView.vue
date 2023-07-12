@@ -92,17 +92,17 @@
         </div>
       </div>
 
-      <!-- <IndicadoresGlobales :apiResponse="apiResponse" /> -->
-
       <div class="card contenedor mt-4 shadow">
         <div class="row">
-          <div class="col-3 align-self-start mt-5">
+          <div class="col-2 align-self-start mt-5">
             <div class="kpi-cobertura">
               <div class="kpi-cobertura-titulo">
-                % Cobertura
+                Cobertura
               </div>
               <div class="row">
-                <div class="col-6 kpi-cobertura-num-grande">{{ apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}%</div>
+                <div class="col-6 kpi-cobertura-num-grande" style="display: flex; align-items: baseline;">
+                  {{ apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual }}<span>%</span>
+                </div>
                 <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;"><i
                     class="bi bi-arrow-up-circle flecha-arriba"></i>
                   <span class="flecha"> 12%</span>
@@ -118,11 +118,12 @@
             </div>
             <div class="kpi-cobertura mt-5">
               <div class="kpi-cobertura-titulo">
-                % Permanencia
+                Permanencia
               </div>
               <div class="row">
-                <div class="col-6 kpi-cobertura-num-grande">{{
-                  apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual }}%</div>
+                <div class="col-6 kpi-cobertura-num-grande" style="display: flex; align-items: baseline;">
+                  {{ apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual }}<span>%</span>
+                </div>
                 <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;"><i
                     class="bi bi-arrow-down-circle flecha-abajo"></i>
                   <span class="flecha"> 12%</span>
@@ -138,7 +139,7 @@
             </div>
           </div>
 
-          <div class="col-9">
+          <div class="col-10">
             <div class="">
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
@@ -221,7 +222,8 @@
                   <td>{{ item.locales_programadas }}</td>
                   <td>{{ item.locales_completados !== 0 ? item.locales_completados : '-' }}</td>
                   <td>{{ item.locales_iniciados !== 0 ? items.locales_iniciados : '-' }}</td>
-                  <td :class="{ 'table-danger': item.locales_pendientes > 0 }">{{ item.locales_pendientes !== 0 ? item.locales_pendientes : '-'}}</td>
+                  <td :class="{ 'table-danger': item.locales_pendientes > 0 }">{{ item.locales_pendientes !== 0 ?
+                    item.locales_pendientes : '-' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -496,7 +498,7 @@ export default {
       formatHasta,
       filtrarFechas,
       dataReloaded,
-      clientId, 
+      clientId,
       displayUnDecimal
     };
   },
@@ -582,7 +584,7 @@ export default {
 }
 
 .kpi-cobertura-num-grande {
-  font-size: 30px;
+  font-size: 20px;
   margin-right: -10px;
 }
 

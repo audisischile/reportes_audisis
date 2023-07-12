@@ -2,8 +2,6 @@
   <div class="scroll-container">
     <div class="col align-center">
       <h6 class="card-subtitle mb-2 text-body-secondary titulo-tabla-cobertura">% COBERTURA POR USUARIO</h6>
-      <!-- <div class="color-rectangle"></div>
-      <span class="cobertura-label">% Cobertura por usuario</span> -->
       <button @click="toggleOrden" class="icon-button">
         <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
       </button>
@@ -13,7 +11,7 @@
         <div class="col-5 nombreUsuario">{{ item.usuario }}</div>
         <div class="col-7">
           <div class="progress" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" :style="{ width: item.cobertura + '%' }">{{ item.cobertura }}%</div>
+            <div class="progress-bar" :style="{ width: item.cobertura + '%' }">{{ aproximar(item.cobertura) }}%</div>
           </div>
         </div>
       </div>
@@ -32,9 +30,8 @@ const props = defineProps({
 });
 
 const usuariosCobertura = ref([]);
-const ordenAscendente = ref(false); // Estado para almacenar la dirección de ordenamiento
+const ordenAscendente = ref(false);
 
-// Función para crear el arreglo de usuarios y su cobertura
 const crearUsuariosCobertura = () => {
   usuariosCobertura.value = props.datosUsuarios.map((usuario) => ({
     usuario: usuario.Usuario,
@@ -42,9 +39,8 @@ const crearUsuariosCobertura = () => {
   }));
 };
 
-crearUsuariosCobertura(); // Llamar a la función para crear el arreglo inicial
+crearUsuariosCobertura();
 
-// Función para ordenar los usuarios por cobertura en la dirección actual
 const ordenarUsuariosCobertura = () => {
   usuariosCobertura.value.sort((a, b) => {
     if (ordenAscendente.value) {
@@ -55,11 +51,15 @@ const ordenarUsuariosCobertura = () => {
   });
 };
 
-// Función para cambiar la dirección de ordenamiento al hacer clic en el botón
 const toggleOrden = () => {
   ordenAscendente.value = !ordenAscendente.value;
   ordenarUsuariosCobertura();
 };
+
+const aproximar = (numero) => {
+  return Math.round(numero * 10) / 10;
+};
+
 
 // Ordenar los usuarios inicialmente
 ordenarUsuariosCobertura();
@@ -68,18 +68,18 @@ ordenarUsuariosCobertura();
 
 <style scoped>
 .scroll-container {
-  max-height: 350px; /* Ajusta la altura máxima deseada */
+  max-height: 350px;
   overflow-y: auto;
 }
 
 .col {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Centrar horizontalmente y agregar espacio entre los elementos */
+  justify-content: space-between;
 }
 
 .align-center {
-  align-items: center; /* Centrar verticalmente */
+  align-items: center; 
 }
 
 .color-rectangle {
@@ -100,7 +100,7 @@ ordenarUsuariosCobertura();
 }
 
 .usuarios-container {
-  margin-top: 10px; /* Espacio para dejar visible el texto */
+  margin-top: 10px;
 }
 
 .nombreUsuario {
@@ -118,7 +118,7 @@ ordenarUsuariosCobertura();
   padding: 0;
 }
 .progress-bar {
-  border-radius: 0; /* Remueve los bordes redondeados */
+  border-radius: 0;
 }
 
 .titulo-tabla-cobertura{
