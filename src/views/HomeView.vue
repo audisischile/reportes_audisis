@@ -360,7 +360,7 @@ export default {
 
     onMounted(async () => {
       try {
-        const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+        const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
           id_cliente: clientId.value,
           fecha_inicio: formatFechaSQL(new Date()),
           fecha_fin: formatFechaSQL(new Date()),
@@ -431,7 +431,7 @@ export default {
         console.log(formatFechaSQL(dateInicio.value));
 
         try {
-          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
             fecha_inicio: formatFechaSQL(dateInicio.value),
             fecha_fin: formatFechaSQL(dateFin.value),
