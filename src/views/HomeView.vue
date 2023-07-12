@@ -1,7 +1,7 @@
 <template>
   <div class="container" v-if="dataLoaded && apiResponse">
     <div class="breadcrum mb-2 mt-2">
-      Inicio / Cobertura / {{ clientId }}
+      Inicio / Cobertura / ID de cliente: {{ clientId }}
     </div>
     <div class="row mt-5">
       <div class="col-5">
@@ -114,7 +114,9 @@
               </div>
               <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
                 aria-valuemax="100" style="height: 10px;">
-                <div class="progress-bar" :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual + '%', backgroundColor: 'rgb(63, 121, 229)' }"></div>
+                <div class="progress-bar"
+                  :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual + '%', backgroundColor: 'rgb(63, 121, 229)' }">
+                </div>
 
               </div>
             </div>
@@ -132,7 +134,9 @@
               </div>
               <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="50" aria-valuemin="0"
                 aria-valuemax="100" style="height: 10px;">
-                <div class="progress-bar" :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual + '%', backgroundColor: 'rgb(10, 193, 156)' }"></div>
+                <div class="progress-bar"
+                  :style="{ width: apiResponse.indicadores_globales[0].Porcentaje_Permanencia_Mensual + '%', backgroundColor: 'rgb(10, 193, 156)' }">
+                </div>
 
               </div>
             </div>
@@ -143,11 +147,13 @@
               <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
                   <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button"
-                    role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-info-circle"></i> Gráfico</button>
+                    role="tab" aria-controls="home" aria-selected="true"><i class="bi bi-info-circle"></i>
+                    Gráfico</button>
                 </li>
                 <li class="nav-item" role="presentation">
                   <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                    role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-info-circle"></i> DATOS DEL PERIODO</button>
+                    role="tab" aria-controls="profile" aria-selected="false"><i class="bi bi-info-circle"></i> DATOS DEL
+                    PERIODO</button>
                 </li>
               </ul>
               <div class="tab-content mt-2" id="myTabContent">
@@ -269,11 +275,11 @@
     </div>
     <div class="container" v-else-if="!dataReloaded">
       <div class="d-flex align-items-center justify-content-center mt-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Cargando página...</span>
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando página...</span>
+        </div>
+        <h4 class="ms-3">Cargando datos del periodo...</h4>
       </div>
-      <h4 class="ms-3">Cargando datos del periodo...</h4>
-    </div>
     </div>
   </div>
 
@@ -309,7 +315,7 @@ export default {
     GraficoUsuarios,
     VueDatePicker
   },
-  setup() {
+  setup(props) {
     const apiResponse = ref(null);
     const dataLoaded = ref(false);
     const cadenas = ref([]);
@@ -319,7 +325,7 @@ export default {
     const dateFin = ref(null);
     const fechaHoy = ref(new Date());
     const dataReloaded = ref(true);
-    const clientId = ref(null);
+    const clientId = ref(props.clientId);
 
 
     const formatDesde = (date) => {
@@ -358,13 +364,17 @@ export default {
     onMounted(async () => {
       try {
         const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-          id_cliente: 82,
+          id_cliente: clientId.value,
           fecha_inicio: formatFechaSQL(new Date()),
           fecha_fin: formatFechaSQL(new Date()),
           id_usuarios: [],
           id_locales: [],
           id_cadenas: []
         });
+
+        console.log("respuesta", response)
+        console.log("respuesta.data", response.data)
+
         apiResponse.value = JSON.parse(response.data.trim());
         dataLoaded.value = true;
         const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
@@ -425,7 +435,7 @@ export default {
 
         try {
           const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-            id_cliente: 82,
+            id_cliente: clientId.value,
             fecha_inicio: formatFechaSQL(dateInicio.value),
             fecha_fin: formatFechaSQL(dateFin.value),
             id_usuarios: [],
@@ -454,7 +464,25 @@ export default {
 
 
 
-    return { apiResponse, dataLoaded, formatMinutes, cadenas, cadenaElegida, PDOFiltrado, UsuarioFiltrado, PDOElegido, dateInicio, dateFin, fechaHoy, formatFecha, formatDesde, formatHasta, filtrarFechas, dataReloaded };
+    return {
+      apiResponse,
+      dataLoaded,
+      formatMinutes,
+      cadenas, 
+      cadenaElegida, 
+      PDOFiltrado, 
+      UsuarioFiltrado, 
+      PDOElegido, 
+      dateInicio, 
+      dateFin, 
+      fechaHoy, 
+      formatFecha, 
+      formatDesde, 
+      formatHasta, 
+      filtrarFechas, 
+      dataReloaded, 
+      clientId
+    };
   },
 };
 
@@ -625,5 +653,4 @@ export default {
 
 .tabla-datos-periodo {
   font-size: 14px;
-}
-</style>
+}</style>
