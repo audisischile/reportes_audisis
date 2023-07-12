@@ -1,7 +1,7 @@
 <template>
   <div class="scroll-container">
     <div class="col align-center">
-      <h6 class="card-subtitle mb-2 text-body-secondary titulo-tabla-cobertura"><i class="bi bi-info-circle"></i> COBERTURA POR USUARIO</h6>
+      <h6 class="card-subtitle mb-2 text-body-secondary titulo-tabla-cobertura">% COBERTURA POR USUARIO</h6>
       <!-- <div class="color-rectangle"></div>
       <span class="cobertura-label">% Cobertura por usuario</span> -->
       <button @click="toggleOrden" class="icon-button">

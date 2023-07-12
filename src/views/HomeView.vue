@@ -1,8 +1,8 @@
 <template>
   <div class="container" v-if="dataLoaded && apiResponse">
-    <div class="breadcrum mb-2 mt-2">
+    <!-- <div class="breadcrum mb-2 mt-2">
       Inicio / Cobertura / ID de cliente: {{ clientId }}
-    </div>
+    </div> -->
     <div class="row mt-5">
       <div class="col-5">
         <div class="row">
@@ -45,12 +45,10 @@
           </div>
         </div>
         <div class="row mt-3">
-          <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida">
-              <option selected value="[]" placeholder="Cadena">Cadena</option>
-              <option v-for="item in cadenas" :value="item">{{ item }}</option>
-            </select>
-          </div>
+          <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida">
+            <option selected value="">Cadena</option>
+            <option v-for="item in cadenas" :value="item">{{ item }}</option>
+          </select>
           <div class="col-3">
             <select class="form-select filtros" aria-label="Default select example">
               <option selected>PDO</option>
@@ -162,7 +160,7 @@
                     <div class="col-12" style="height: 250px;">
 
                       <!-- Grafico Cobertura -->
-                      <GraficoCobertura />
+                      <GraficoCobertura :apiResponse="apiResponse" />
 
                     </div>
                   </div>
@@ -204,7 +202,7 @@
         <div class="col-8">
           <div class="card tabla-por-usuario shadow">
             <div class="card-body tabla-usuarios">
-              <h6 class="card-subtitle mb-2 text-body-secondary"><i class="bi bi-info-circle"></i> DETALLE POR USUARIO
+              <h6 class="card-subtitle mb-2 text-body-secondary"><i class="bi bi-info-circle"></i> COBERTURA POR USUARIO
               </h6>
               <table class="table titulo-tabla table-hover table-striped table-sm">
                 <thead style="">
@@ -241,9 +239,8 @@
       </div>
 
 
-      <div class="card mt-3 tabla-por-usuario shadow">
-        <h6 class="card-subtitle text-body-secondary titulo-por-usuario"><i class="bi bi-info-circle"></i> DETALLE POR
-          USUARIO</h6>
+      <div class="card mt-3 tabla-por-usuario shadow mb-4">
+        <h6 class="card-subtitle text-body-secondary titulo-por-usuario"><i class="bi bi-info-circle"></i>PERMANENCIA POR LOCAL</h6>
         <table class="table titulo-tabla table-hover table-striped">
           <thead>
             <tr style="position: sticky; top:0;">
@@ -319,7 +316,7 @@ export default {
     const apiResponse = ref(null);
     const dataLoaded = ref(false);
     const cadenas = ref([]);
-    const cadenaElegida = ref([]);
+    const cadenaElegida = ref('');
     const PDOElegido = ref([]);
     const dateInicio = ref(null);
     const dateFin = ref(null);
@@ -468,19 +465,19 @@ export default {
       apiResponse,
       dataLoaded,
       formatMinutes,
-      cadenas, 
-      cadenaElegida, 
-      PDOFiltrado, 
-      UsuarioFiltrado, 
-      PDOElegido, 
-      dateInicio, 
-      dateFin, 
-      fechaHoy, 
-      formatFecha, 
-      formatDesde, 
-      formatHasta, 
-      filtrarFechas, 
-      dataReloaded, 
+      cadenas,
+      cadenaElegida,
+      PDOFiltrado,
+      UsuarioFiltrado,
+      PDOElegido,
+      dateInicio,
+      dateFin,
+      fechaHoy,
+      formatFecha,
+      formatDesde,
+      formatHasta,
+      filtrarFechas,
+      dataReloaded,
       clientId
     };
   },
@@ -653,4 +650,5 @@ export default {
 
 .tabla-datos-periodo {
   font-size: 14px;
-}</style>
+}
+</style>
