@@ -405,10 +405,10 @@ export default {
         } else {
           const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
-            // fecha_inicio: formatFechaSQL(new Date()),
-            // fecha_fin: formatFechaSQL(new Date()),
-            fecha_inicio: "2023-01-04",
-            fecha_fin: "2023-01-10",
+            fecha_inicio: formatFechaSQL(new Date()),
+            fecha_fin: formatFechaSQL(new Date()),
+            // fecha_inicio: "2023-01-04",
+            // fecha_fin: "2023-01-10",
             id_usuarios: [],
             id_locales: [],
             id_cadenas: []
