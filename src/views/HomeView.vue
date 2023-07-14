@@ -404,13 +404,14 @@ export default {
           apiResponse.value = store.datosCobertura
         } else {
           const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+            // id_cliente: clientId.value,
+            // fecha_inicio: formatFechaSQL(new Date()),
+            // fecha_fin: formatFechaSQL(new Date()),
             id_cliente: clientId.value,
-            fecha_inicio: formatFechaSQL(new Date()),
-            fecha_fin: formatFechaSQL(new Date()),
-            // fecha_inicio: "2023-01-04",
-            // fecha_fin: "2023-01-10",
+            fecha_inicio: "2023-01-04",
+            fecha_fin: "2023-01-10",
             id_usuarios: [],
-            id_locales: [],
+            id_locales: [], 
             id_cadenas: []
           });
 
@@ -480,9 +481,12 @@ export default {
 
         try {
           const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-            id_cliente: clientId.value,
-            fecha_inicio: formatFechaSQL(dateInicio.value),
-            fecha_fin: formatFechaSQL(dateFin.value),
+            // id_cliente: clientId.value,
+            // fecha_inicio: formatFechaSQL(dateInicio.value),
+            // fecha_fin: formatFechaSQL(dateFin.value),
+            id_cliente: 82,
+            fecha_inicio: "2023-01-04",
+            fecha_fin: "2023-01-10",
             id_usuarios: [],
             id_locales: [],
             id_cadenas: []
