@@ -25,6 +25,14 @@ export default {
   setup(props) {
     const dataLoaded = ref(false);
 
+    const truncateLabel = (label) => {
+      const maxLength = 6;
+      if (label.length > maxLength) {
+        return label.slice(0, maxLength) + '...';
+      }
+      return label;
+    };
+
     const chartData = ref({});
     const chartOptions = {
       responsive: true,
@@ -33,12 +41,35 @@ export default {
         y: {
           beginAtZero: true,
         },
+        x: {
+          grid: {
+            display: false,
+          },
+        },
       },
+      plugins: {
+        tooltip: {
+          fontFamily: 'Arial, sans-serif',
+        },
+        legend: {
+          labels: {
+            fontFamily: 'Arial, sans-serif',
+          },
+        },
+        title: {
+          display: false,
+          text: 'Gráfico de cobertura y permanencia',
+          font: {
+            family: 'Arial, sans-serif',
+          },
+        },
+      },
+
     };
 
     onMounted(async () => {
       try {
-        const labels = props.apiResponse.porcentaje_cadena.map((item) => item.NombreCadenaReal);
+        const labels = props.apiResponse.porcentaje_cadena.map((item) => truncateLabel(item.NombreCadenaReal));
         const coberturaData = props.apiResponse.porcentaje_cadena.map((item) => parseFloat(item.Porcentaje_Cobertura_Mensual));
         const permanenciaData = props.apiResponse.porcentaje_cadena.map((item) => parseFloat(item.Porcentaje_Permanencia_Mensual));
 
@@ -46,18 +77,18 @@ export default {
           labels,
           datasets: [
             {
-              label: 'Porcentaje de Cobertura',
+              label: '% Cobertura',
               data: coberturaData,
               backgroundColor: 'rgba(63, 121, 229, 1)',
               borderWidth: 1,
-              barThickness: 10,
+              barThickness: 20,
             },
             {
-              label: 'Porcentaje de Permanencia',
+              label: '% Permanencia',
               data: permanenciaData,
               backgroundColor: 'rgba(9, 194, 156, 1)',
               borderWidth: 1,
-              barThickness: 10,
+              barThickness: 20,
             },
           ],
         };
@@ -76,10 +107,10 @@ export default {
 <style scoped>
 .grafico {
   height: 100%;
-  overflow-y: auto; /* Agregar scroll vertical */
+  overflow-y: auto;
 }
 
 .chart-container {
-  height: 100%; /* Asegurar que el contenedor ocupe todo el espacio disponible */
+  height: 100%;
 }
 </style>

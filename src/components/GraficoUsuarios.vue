@@ -1,24 +1,29 @@
 <template>
+  <div class="col align-center">
+    <h6 class="card-subtitle mb-4 text-body-secondary titulo-tabla-cobertura"><i class="bi bi-table"></i> COBERTURA POR USUARIO</h6>
+    <button @click="toggleOrden" class="icon-button">
+      <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+    </button>
+  </div>
   <div class="scroll-container">
-    <div class="col align-center">
-      <h6 class="card-subtitle mb-2 text-body-secondary titulo-tabla-cobertura">% COBERTURA POR USUARIO</h6>
-      <button @click="toggleOrden" class="icon-button">
-        <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
-      </button>
-    </div>
-    <div class="usuarios-container">
-      <div class="row align-items-center" v-for="(item, index) in usuariosCobertura" :key="index">
-        <div class="col-5 nombreUsuario">{{ item.usuario }}</div>
-        <div class="col-7">
-          <div class="progress" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura" aria-valuemin="0" aria-valuemax="100">
-            <div class="progress-bar" :style="{ width: item.cobertura + '%' }">{{ aproximar(item.cobertura) }}%</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <table class="tabla-cobertura">
+      <tbody>
+        <tr v-for="(item, index) in usuariosCobertura" :key="index">
+          <td class="usuario">{{ obtenerPrimerasDosPalabras(item.usuario.toUpperCase()) }}</td>
+          <td>
+            <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura"
+              aria-valuemin="0" aria-valuemax="100">
+              <div class="progress-bar" :style="{ width: item.cobertura + '%' }">{{
+                aproximar(item.cobertura) }}%</div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
+ 
 <script setup>
 import { ref, defineProps } from 'vue';
 
@@ -60,7 +65,13 @@ const aproximar = (numero) => {
   return Math.round(numero * 10) / 10;
 };
 
+function obtenerPrimerasDosPalabras(nombre) {
+  const palabras = nombre.trim().split(' ');
+  const primerasDosPalabras = palabras.slice(0, 2);
+  const resultado = primerasDosPalabras.join(' ');
 
+  return resultado;
+}
 // Ordenar los usuarios inicialmente
 ordenarUsuariosCobertura();
 
@@ -68,7 +79,7 @@ ordenarUsuariosCobertura();
 
 <style scoped>
 .scroll-container {
-  max-height: 350px;
+  max-height: 315px;
   overflow-y: auto;
 }
 
@@ -79,35 +90,18 @@ ordenarUsuariosCobertura();
 }
 
 .align-center {
-  align-items: center; 
+  align-items: center;
 }
 
-.color-rectangle {
-  width: 20px;
-  height: 10px;
-  background-color: blue;
-  margin-right: 10px;
+.tabla-cobertura {
+  width: 100%;
+  border-collapse: collapse;
+  border: none; 
 }
 
-.cobertura-label {
-  font-size: 14px;
-  color: darkgray;
-  position: sticky;
-  top: 0;
-  background-color: white;
-  padding: 5px;
-  z-index: 1;
-}
-
-.usuarios-container {
-  margin-top: 10px;
-}
-
-.nombreUsuario {
-  font-size: 10px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  color: darkgray;
+.usuario {
+  font-size: 11px;
+  font-family: Roboto, sans-serif;
 }
 
 .icon-button {
@@ -117,14 +111,17 @@ ordenarUsuariosCobertura();
   outline: none;
   padding: 0;
 }
-.progress-bar {
+
+.custom-progress-bar{
   border-radius: 0;
+  height: 15px; 
+  min-width: 100px;
+  border: none; 
 }
 
-.titulo-tabla-cobertura{
-  margin-top: 5px;
-  margin-left: 5px;
-
+.titulo-tabla-cobertura {
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 0px;
 }
-
 </style>
