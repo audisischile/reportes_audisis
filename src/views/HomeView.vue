@@ -37,23 +37,26 @@
             </div>
           </div>
           <div class="col-5 mt-2">
-            <button class="btn btn-rango btn" style="border-radius: 0; background-color: white; border-color: #9596FC;" @click="filtrarFechas">Filtrar<i
-                class="bi bi-calendar-range ms-2"></i></button>
+            <button class="btn btn-rango btn" style="border-radius: 0; background-color: white; border-color: #9596FC;"
+              @click="filtrarFechas">Filtrar<i class="bi bi-calendar-range ms-2"></i></button>
           </div>
         </div>
         <div class="row mt-3" style="margin-left: 0px;">
-          <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida" style="border-radius: 0; background-color: white; border-color: #9596FC;">
+          <select class="form-select filtros" aria-label="Default select example" v-model="cadenaElegida"
+            style="border-radius: 0; background-color: white; border-color: #9596FC;">
             <option selected value="">Cadena</option>
             <option v-for="item in cadenas" :value="item">{{ item }}</option>
           </select>
           <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example" style="border-radius: 0; background-color: white; border-color: #9596FC;">
+            <select class="form-select filtros" aria-label="Default select example"
+              style="border-radius: 0; background-color: white; border-color: #9596FC;">
               <option selected>PDO</option>
               <option v-for="item in PDOFiltrado" value="1">{{ item.PDO }}</option>
             </select>
           </div>
           <div class="col-3">
-            <select class="form-select filtros" aria-label="Default select example" style="border-radius: 0; background-color: white; border-color: #9596FC;">
+            <select class="form-select filtros" aria-label="Default select example"
+              style="border-radius: 0; background-color: white; border-color: #9596FC;">
               <option selected>Usuario</option>
               <option v-for="item in UsuarioFiltrado" value="1">{{ item.Usuario }}</option>
             </select>
@@ -69,7 +72,8 @@
         <div class="indicador-card card col-2 me-2 flex-fill shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
-              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_programadas }}</span>
+              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_programadas
+              }}</span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -85,7 +89,8 @@
         <div class="indicador-card card col-2 me-2 flex-fill shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
-              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_completados }}</span>
+              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_completados
+              }}</span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -101,8 +106,8 @@
         <div class="indicador-card card col-2 me-2 flex-fill shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
-              <!-- <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_iniciados }}</span> -->
-              <span class="indicador-numero" style="color: white">0</span>
+              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_iniciados
+              }}</span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -118,7 +123,8 @@
         <div class="indicador-card card col-2 me-2 flex-fill shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
-              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_pendientes }}</span>
+              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_pendientes
+              }}</span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -253,7 +259,7 @@
         <div class="col-4">
           <div class="card shadow" style="overflow-y: auto; height: 100%;">
             <div class="card-body">
-              <GraficoUsuarios :datosUsuarios="apiResponse.porcentaje_locales" class="shadow"/>
+              <GraficoUsuarios :datosUsuarios="apiResponse.porcentaje_locales" class="shadow" />
             </div>
           </div>
         </div>
@@ -264,7 +270,8 @@
         <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-3"><i class="bi bi-table"></i>
           PERMANENCIA POR LOCAL</h6>
         <div class="table-responsive">
-          <table class="table titulo-tabla table-hover table-striped" style="font-size: 11px; font-family: Roboto, sans-serif;">
+          <table class="table titulo-tabla table-hover table-striped"
+            style="font-size: 11px; font-family: Roboto, sans-serif;">
             <thead>
               <tr>
                 <th scope="col" class="sticky-top">Día</th>
@@ -284,8 +291,10 @@
                 <td>{{ item.Usuario.toUpperCase() }}</td>
                 <td style="font-size: 13px; font-family: Roboto, sans-serif;">{{ item.MarcaEntrada }}</td>
                 <td style="font-size: 13px; font-family: Roboto, sans-serif;">{{ item.MarcaSalida }}</td>
-                <td style="font-size: 13px;"><i class="bi bi-stopwatch"></i> {{ formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
-                <td style="font-size: 13px;" class="table-success"><i class="bi bi-stopwatch"></i> {{ formatMinutes(item.TiempoPermanenciaMinutos)
+                <td style="font-size: 13px;"><i class="bi bi-stopwatch"></i> {{
+                  formatMinutes(item.TiempoPermanenciaEstablecida) }}</td>
+                <td style="font-size: 13px;" class="table-success"><i class="bi bi-stopwatch"></i> {{
+                  formatMinutes(item.TiempoPermanenciaMinutos)
                 }}</td>
               </tr>
             </tbody>
@@ -372,7 +381,7 @@ export default {
 
       return `${day}/${month}/${year}`;
     }
-    
+
     const formatFecha = (fecha) => {
       const fechaFormateada = fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
       return fechaFormateada;
@@ -394,18 +403,22 @@ export default {
           await new Promise(resolve => setTimeout(resolve, delayLoading.value));
           apiResponse.value = store.datosCobertura
         } else {
-          const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
-            fecha_inicio: formatFechaSQL(new Date()),
-            fecha_fin: formatFechaSQL(new Date()),
-            // fecha_inicio: "2023-01-04",
-            // fecha_fin: "2023-01-10",
+            // fecha_inicio: formatFechaSQL(new Date()),
+            // fecha_fin: formatFechaSQL(new Date()),
+            fecha_inicio: "2023-01-04",
+            fecha_fin: "2023-01-10",
             id_usuarios: [],
             id_locales: [],
             id_cadenas: []
           });
 
-          apiResponse.value = JSON.parse(response.data.trim());
+          const reg = /\uFEFF/g;
+          const newResponse = response.data.trim().replace(reg, "");
+          apiResponse.value = JSON.parse(newResponse);
+
+          // apiResponse.value = JSON.parse(response.data.trim());
         }
 
         dataLoaded.value = true;
@@ -466,7 +479,7 @@ export default {
         console.log(formatFechaSQL(dateInicio.value));
 
         try {
-          const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
             fecha_inicio: formatFechaSQL(dateInicio.value),
             fecha_fin: formatFechaSQL(dateFin.value),
@@ -475,7 +488,7 @@ export default {
             id_cadenas: []
           });
           apiResponse.value = JSON.parse(response.data.trim());
-          
+
           dataReloaded.value = true;
           const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
           cadenas.value = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
@@ -529,7 +542,8 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600&display=swap');
-.card{
+
+.card {
   border-radius: 0px;
 }
 
@@ -602,7 +616,7 @@ export default {
 
 .indicador-card {
   border-color: #6f71bd;
-  background-color:  #9596FC;
+  background-color: #9596FC;
   height: 80px;
   width: 220px;
 }
@@ -794,5 +808,4 @@ export default {
 
 .tabla-datos-periodo {
   font-size: 14px;
-}
-</style>
+}</style>
