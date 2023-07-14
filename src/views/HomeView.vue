@@ -487,7 +487,12 @@ export default {
             id_locales: [],
             id_cadenas: []
           });
-          apiResponse.value = JSON.parse(response.data.trim());
+
+          const reg = /\uFEFF/g;
+          const newResponse = response.data.trim().replace(reg, "");
+          apiResponse.value = JSON.parse(newResponse);
+
+          // apiResponse.value = JSON.parse(response.data.trim());
 
           dataReloaded.value = true;
           const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
