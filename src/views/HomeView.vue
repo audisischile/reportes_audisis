@@ -101,7 +101,8 @@
         <div class="indicador-card card col-2 me-2 flex-fill shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
-              <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_iniciados }}</span>
+              <!-- <span class="indicador-numero" style="color: white">{{ apiResponse.usuario_local[0].locales_iniciados }}</span> -->
+              <span class="indicador-numero" style="color: white">0</span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -393,7 +394,7 @@ export default {
           await new Promise(resolve => setTimeout(resolve, delayLoading.value));
           apiResponse.value = store.datosCobertura
         } else {
-          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
             fecha_inicio: formatFechaSQL(new Date()),
             fecha_fin: formatFechaSQL(new Date()),
@@ -465,7 +466,7 @@ export default {
         console.log(formatFechaSQL(dateInicio.value));
 
         try {
-          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
+          const response = await axios.post("https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
             id_cliente: clientId.value,
             fecha_inicio: formatFechaSQL(dateInicio.value),
             fecha_fin: formatFechaSQL(dateFin.value),
