@@ -79,14 +79,14 @@ export default {
             {
               label: '% Cobertura',
               data: coberturaData,
-              backgroundColor: 'rgba(63, 121, 229, 1)',
+              backgroundColor: '#f97013',
               borderWidth: 1,
               barThickness: 20,
             },
             {
               label: '% Permanencia',
               data: permanenciaData,
-              backgroundColor: 'rgba(9, 194, 156, 1)',
+              backgroundColor: '#47A8BD',
               borderWidth: 1,
               barThickness: 20,
             },

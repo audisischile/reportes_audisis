@@ -1,57 +1,71 @@
 <template>
- {{ apiResponse }}
+  <div v-if="useStore.loading">
+    <div class="d-flex align-items-center justify-content-center mt-5">
+      <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+      </div>
+      <h4 class="ms-3">Generando reporte ...</h4>
+    </div>
+  </div>
+  <div v-else>
+    <ModuloFiltrosVue :apiResponse="useStore.apiResponse"></ModuloFiltrosVue>
+    <div v-if="useStore.updating">
+      <div class="d-flex align-items-center justify-content-center mt-5">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+        </div>
+        <h4 class="ms-3">Filtrando reporte ...</h4>
+      </div>
+    </div>
+    <div v-else>
+      <IndicadoresGlobales :apiResponse="useStore.apiResponse" class="mb-4"></IndicadoresGlobales>
+      <CoberturaPermanencia :apiResponse="useStore.apiResponse" class="mb-4"></CoberturaPermanencia>
+      <div class="row mb-4">
+        <div class="col-8">
+          <CoberturaTotal :apiResponse="useStore.apiResponse"></CoberturaTotal>
+        </div>
+        <div class="col-4">
+          <div class="card shadow" style="overflow-y: auto; height: 100%;">
+            <div class="card-body">
+              <GraficoUsuarios :datosUsuarios="useStore.apiResponse.porcentaje_locales" class="shadow" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <PermanenciaPorLocal :apiResponse="useStore.apiResponse"></PermanenciaPorLocal>
+      <!-- <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria> -->
+    </div>
+  </div>
+  <!-- {{ useStore.apiResponse }} -->
 </template>
-  
+
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { useApiStore } from '@/stores/conexiones.js';
+import { onBeforeUnmount } from 'vue'
+import axios from 'axios'
+import Chart from 'chart.js/auto';
+import IndicadoresGlobales from '@/components/IndicadoresGlobales.vue'
+import CoberturaPermanencia from '@/components/CoberturaPermanencia.vue'
+import CoberturaTotal from '@/components/CoberturaTotal.vue'
+import GraficoUsuarios from '@/components/GraficoUsuarios.vue'
+import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
+import JornadaDiaria from '@/components/JornadaDiaria.vue'
+import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
-const apiResponse = ref(null);
-const dataLoaded = ref(false);
-const cadenas = ref([]);
-const dateInicio = ref(null);
-const dateFin = ref(null);
-const delayLoading = ref(1000);
-const debbugMode = ref(false);
-const clientId = ref(82);
+const useStore = useApiStore();
+useStore.getData();
 
-onMounted(async () => {
-      try {
-        if (debbugMode.value) {
-          await new Promise(resolve => setTimeout(resolve, delayLoading.value));
-          apiResponse.value = store.datosCobertura
-        } else {
-          const response = await axios.post("https://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura", {
-            id_cliente: clientId.value,
-            // fecha_inicio: formatFechaSQL(new Date()),
-            // fecha_fin: formatFechaSQL(new Date()),
-            fecha_inicio: "2023-01-04",
-            fecha_fin: "2023-01-10",
-            id_usuarios: [],
-            id_locales: [],
-            id_cadenas: []
-          });
-
-          apiResponse.value = JSON.parse(response.data.trim());
-        }
-
-        dataLoaded.value = true;
-        const labels = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
-        cadenas.value = apiResponse.value.porcentaje_cadena.map(item => item.NombreCadenaReal);
-        const coberturaData = apiResponse.value.porcentaje_cadena.map(item => item.Cobertura_Programada_Mensual);
-        const permanenciaData = apiResponse.value.porcentaje_cadena.map(item => item.Permanencia_Programada_Mensual);
-        createChart(labels, coberturaData, permanenciaData);
-        dateInicio.value = new Date();
-        dateFin.value = new Date();
-      }
-      catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    });
+onBeforeUnmount(()=>{
+  useStore.resetData()
+})
 
 </script>
-  
-<style scoped>
 
+<style scoped>
+.spinner-border-custom {
+  border-color: #BA0011;
+  /* Cambia 'your-color' por el color deseado en formato hexadecimal o RGB */
+  background-color: transparent;
+  /* Esto es opcional, puedes mantenerlo transparente o establecer un color de fondo */
+}
 </style>
-  

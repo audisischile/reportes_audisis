@@ -1,6 +1,8 @@
 <template>
   <div class="col align-center">
-    <h6 class="card-subtitle mb-4 text-body-secondary titulo-tabla-cobertura"><i class="bi bi-table"></i> COBERTURA POR USUARIO</h6>
+    <h6 class="card-subtitle mb-4 text-body-secondary titulo-tabla-cobertura">
+      <!-- <i class="bi bi-table"></i>  -->
+      <span style="color: #BA0011">COBERTURA POR USUARIO</span></h6>
     <button @click="toggleOrden" class="icon-button">
       <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
     </button>
@@ -13,8 +15,8 @@
           <td>
             <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura"
               aria-valuemin="0" aria-valuemax="100">
-              <div class="progress-bar" :style="{ width: item.cobertura + '%' }">{{
-                aproximar(item.cobertura) }}%</div>
+              <div class="progress-bar" :style="{ width: item.cobertura + '%', backgroundColor: '#BA0001' }"><span style="color: rgb(230, 230, 230);">{{
+                aproximar(item.cobertura) }}%</span> </div>
             </div>
           </td>
         </tr>
@@ -124,4 +126,9 @@ ordenarUsuariosCobertura();
   font-weight: 600;
   margin-left: 0px;
 }
+
+.card {
+  border-radius: 0px;
+}
+
 </style>
