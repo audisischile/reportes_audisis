@@ -15,7 +15,7 @@
           <td>
             <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura"
               aria-valuemin="0" aria-valuemax="100">
-              <div class="progress-bar" :style="{ width: item.cobertura + '%', backgroundColor: '#BA0001' }"><span style="color: rgb(230, 230, 230);">{{
+              <div class="progress-bar" :style="{ width: item.cobertura + '%', backgroundColor: '#f97013', height:'16px' }"><span style="color: rgb(230, 230, 230);">{{
                 aproximar(item.cobertura) }}%</span> </div>
             </div>
           </td>
@@ -125,10 +125,6 @@ ordenarUsuariosCobertura();
   font-size: 16px;
   font-weight: 600;
   margin-left: 0px;
-}
-
-.card {
-  border-radius: 0px;
 }
 
 </style>

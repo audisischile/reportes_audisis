@@ -1,9 +1,11 @@
 <template>
     <div class="card tabla-por-usuario shadow">
-        <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-1">
-            <!-- <i class="bi bi-table"></i>  -->
-            <span style="color: #BA0011">COBERTURA TOTAL</span>
-        </h6>
+        <div style="background-color: #BA0011;">
+            <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
+                <span style="color: rgb(244, 244, 244)">COBERTURA TOTAL</span>
+            </h6>
+        </div>
+
         <div class="table-responsive">
             <table class="table titulo-tabla table-hover table-striped"
                 style="font-size: 11px; font-family: Roboto, sans-serif;">
@@ -47,7 +49,7 @@ const props = defineProps({
 
 const convertirFecha = (fecha) => {
     let fechaConvertida = fecha.split('-')
-    return fechaConvertida[2] + '-' + fechaConvertida[1] + '-' + fechaConvertida[0]
+    return fechaConvertida[2] + '/' + fechaConvertida[1] + '/' + fechaConvertida[0]
 }
 
 </script>
@@ -64,8 +66,8 @@ const convertirFecha = (fecha) => {
     margin-top: 13px;
     margin-left: 10px;
 }
-.card {
-  border-radius: 0px;
-}
 
+.card {
+    border-radius: 0px;
+}
 </style>

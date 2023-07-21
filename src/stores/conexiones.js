@@ -13,7 +13,7 @@ export const useApiStore = defineStore("api", () => {
   const usuarioSeleccionado = ref(0);
   const fechaInicio = ref(new Date());
   const fechaFin = ref(new Date());
-
+  
   //Modo de prueba desde TEST API
   const devMode = false;
 
@@ -29,7 +29,7 @@ export const useApiStore = defineStore("api", () => {
     fechaFin.value = new Date();
   }
 
-  const getData = async () => {
+  const getData = async (client) => {
     loading.value = true;
     try {
       const response = await axios.post(
@@ -37,80 +37,115 @@ export const useApiStore = defineStore("api", () => {
         "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: 82,
-          // fecha_inicio: fechaParaQuery(fechaInicio.value),
-          // fecha_fin: fechaParaQuery(fechaFin.value),
-          fecha_inicio: "2023-01-04",
-          fecha_fin: "2023-01-10",
+          fecha_inicio: fechaParaQuery(fechaInicio.value),
+          fecha_fin: fechaParaQuery(fechaFin.value),
+          // fecha_inicio: "2023-01-04",
+          // fecha_fin: "2023-01-10",
           id_usuarios: [],
           id_locales: [],
           id_cadenas: [],
         }
       );
 
-      const reg = /\uFEFF/g;
-      const newResponse = response.data.trim().replace(reg, "");
-      apiResponse.value = JSON.parse(newResponse);
+      if (typeof response.data === "string") {
+        const reg = /\uFEFF/g;
+        const newResponse = response.data.trim().replace(reg, "");
+        apiResponse.value = JSON.parse(newResponse);
+      } else {
+        apiResponse.value = null;
+      }
+
       loading.value = false;
+      // Verificar si apiResponse.value no es null antes de acceder a las propiedades
+      if (apiResponse.value !== null) {
+        cadenas.value = apiResponse.value.porcentaje_cadena;
+      } else {
+        cadenas.value = [];
+      }
     } catch (error) {
       console.log(error);
     }
-    cadenas.value = apiResponse.value.porcentaje_cadena;
   };
-
-  const updateData = async () => {
+  
+  
+  const updateData = async (client) => {
     updating.value = true;
     try {
       const response = await axios.post(
-        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: 82,
           fecha_inicio: fechaParaQuery(fechaInicio.value),
           fecha_fin: fechaParaQuery(fechaFin.value),
+          // fecha_inicio: "2023-01-04",
+          // fecha_fin: "2023-01-10",
           id_usuarios: [usuarioSeleccionado.value],
           id_locales: [localSeleccionado.value],
           id_cadenas: [cadenaSeleccionada.value],
         }
       );
-        
-      console.log(cadenaSeleccionada.value)
-      const reg = /\uFEFF/g;
-      const newResponse = response.data.trim().replace(reg, "");
-      apiResponse.value = JSON.parse(newResponse);
+
+      console.log(cadenaSeleccionada.value);
+      if (typeof response.data === "string") {
+        const reg = /\uFEFF/g;
+        const newResponse = response.data.trim().replace(reg, "");
+        apiResponse.value = JSON.parse(newResponse);
+      } else {
+        apiResponse.value = null;
+      }
+
       updating.value = false;
+      // Verificar si apiResponse.value no es null antes de acceder a las propiedades
+      if (apiResponse.value !== null) {
+        cadenas.value = apiResponse.value.porcentaje_cadena;
+      } else {
+        cadenas.value = [];
+      }
     } catch (error) {
       console.log(error);
     }
-    
-  }
+  };
+
+  
 
   const localesFiltrados = computed(() => {
-    if (localSeleccionado.value === 0) {
-      return apiResponse.value.Detalle_Total;
+    if (apiResponse.value !== null) {
+      if (localSeleccionado.value === 0) {
+        return apiResponse.value.Detalle_Total;
+      } else {
+        return apiResponse.value.Detalle_Total.filter(
+          (item) => item.ID_Cadena === cadenaSeleccionada.value
+        );
+      }
     } else {
-      return apiResponse.value.Detalle_Total.filter(
-        (item) => item.ID_Cadena === cadenaSeleccionada.value
-      );
+      return [];
     }
   });
 
+  
+
   const UsuarioFiltrado = computed(() => {
-    if (cadenaSeleccionada.value === 0 && localSeleccionado.value === 0) {
-      return apiResponse.value.Detalle_Total;
-    } else if (cadenaSeleccionada.value.length !== 0) {
-      return apiResponse.value.Detalle_Total.filter(
-        (item) => item.NombreCadena === cadenaSeleccionada.value
-      );
-    } else if (PDOElegido.value.length !== 0) {
-      return apiResponse.value.Detalle_Total.filter(
-        (item) => item.PDO === PDOElegido.value
-      );
-    } else {
-      return apiResponse.value.Detalle_Total.filter(
-        (item) =>
-          item.NombreCadena === cadenaSeleccionada.value &&
-          item.PDO === PDOElegido.value
-      );
-    }
+    const uniqueUsers = new Set(); // Conjunto para almacenar usuarios únicos
+  
+    // Filtrar los datos y agregar usuarios únicos al conjunto
+    apiResponse.value.Detalle_Total.forEach((item) => {
+      if (
+        (cadenaSeleccionada.value === 0 || item.NombreCadena === cadenaSeleccionada.value) &&
+        (localSeleccionado.value === 0 || item.ID_Local === localSeleccionado.value) &&
+        (usuarioSeleccionado.value === 0 || item.Id_usuario === usuarioSeleccionado.value)
+      ) {
+        uniqueUsers.add(item.Id_usuario); // Agregar el Id_usuario al conjunto
+      }
+    });
+  
+    // Convertir el conjunto de usuarios únicos a un array de objetos
+    const filteredUsers = Array.from(uniqueUsers).map((userId) => {
+      // Buscar el objeto correspondiente al usuario en el array original
+      return apiResponse.value.Detalle_Total.find((item) => item.Id_usuario === userId);
+    });
+  
+    return filteredUsers;
   });
 
   function fechaParaQuery(inputFecha) {
@@ -171,6 +206,6 @@ export const useApiStore = defineStore("api", () => {
     fechaFin,
     updating,
     updateData,
-    resetData
+    resetData, 
   };
 });

@@ -6,7 +6,7 @@
       <h4 class="ms-3">Generando reporte ...</h4>
     </div>
   </div>
-  <div v-else>
+  <div v-else class="container">
     <ModuloFiltrosVue :apiResponse="useStore.apiResponse"></ModuloFiltrosVue>
     <div v-if="useStore.updating">
       <div class="d-flex align-items-center justify-content-center mt-5">
@@ -34,13 +34,12 @@
       <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria>
     </div>
   </div>
-  <!-- {{ useStore.apiResponse }} -->
+  {{ useStore.client_id }}
 </template>
 
 <script setup>
 import { useApiStore } from '@/stores/conexiones.js';
-import { onBeforeUnmount } from 'vue'
-import axios from 'axios'
+import { onBeforeUnmount, defineProps, onMounted  } from 'vue'
 import Chart from 'chart.js/auto';
 import IndicadoresGlobales from '@/components/IndicadoresGlobales.vue'
 import CoberturaPermanencia from '@/components/CoberturaPermanencia.vue'
@@ -49,15 +48,19 @@ import GraficoUsuarios from '@/components/GraficoUsuarios.vue'
 import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
 import JornadaDiaria from '@/components/JornadaDiaria.vue'
 import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+
+const props = defineProps({
+  clientId: Number,
+});
 
 const useStore = useApiStore();
-useStore.getData();
+useStore.getData(props.client_id);
 
 onBeforeUnmount(()=>{
   useStore.resetData()
 })
+
+
 
 </script>
 

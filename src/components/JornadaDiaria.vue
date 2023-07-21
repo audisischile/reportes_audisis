@@ -1,9 +1,10 @@
 <template>
   <div class="card tabla-por-usuario shadow mb-4">
-    <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-3">
-      <!-- <i class="bi bi-table"></i> -->
-      <span style="color: #BA0011"> JORNADA DIARIA</span>
-    </h6>
+    <div style="background-color: #BA0011;">
+      <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-3">
+        <span style="color:rgb(244, 244, 244)"> JORNADA DIARIA</span>
+      </h6>
+    </div>
     <div class="table-responsive">
       <table class="table titulo-tabla table-hover table-striped"
         style="font-size: 11px; font-family: Roboto, sans-serif;">
@@ -38,7 +39,7 @@
             <td>{{ item.MarcaEntrada }}</td>
             <td>{{ item.TurnoSalida }}</td>
             <td>{{ item.MarcaSalida }}</td>
-            <td>P</td>
+            <td>{{ getResumenPermiso(item.ID_Permiso) }}</td>
             <td>{{ item.HorasTrabajadas }}</td>
             <td>{{ item.HorasTrabajar }}</td>
             <td>{{ item.HorasNoTrabajadas }}</td>
@@ -51,23 +52,25 @@
           </tr>
         </tbody>
         <tfoot>
-          <td>Total</td>
-          <td>
-          </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td>00:03:23</td>
-          <td>00:02:01</td>
-          <td></td>
-          <td>00:03:23</td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <tr>
+            <td class="totales text-center">Total</td>
+            <td>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="totales">{{ secondsToHHMMSS(horasTrabajadas) }}</td>
+            <td></td>
+            <td class="totales">{{ secondsToHHMMSS(horasNoTrabajadas) }}</td>
+            <td class="totales">{{ secondsToHHMMSS(horasDeAtraso) }}</td>
+            <td></td>
+            <td class="totales">{{ secondsToHHMMSS(horasExtra) }}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
         </tfoot>
       </table>
     </div>
@@ -85,19 +88,21 @@
       </div>
       <hr>
       <div class="row" style="margin-top: -1em; margin-bottom: -1em;">
+        <div class="col-2"><strong>DN:</strong> Día Normal</div>
+        <div class="col-2"><strong>ST:</strong> Sin turno</div>
         <div class="col-2"><strong>L:</strong> Licencia</div>
         <div class="col-2"><strong>V:</strong> Vacaciones</div>
         <div class="col-2"><strong>FE:</strong> Feriado</div>
-        <div class="col-2"><strong>PR:</strong> Permiso por reunión</div>
-        <div class="col-2"><strong>LCGT:</strong> Local cubierto gestor sin teléfono</div>
         <div class="col-2"><button @click="toggleLeyendas" class="btn btn-sm"
-            style="border-radius: 0; background-color: white; border-color: #BA0011; color: #BA0011;">{{
+            style="border-radius: 0; background-color: #ED3632; border-color: #BA0011; color: #fafafa;">{{
               mostrarLeyendas ? "Ver menos" : "Ver más" }}</button>
         </div>
       </div>
 
       <div class="row mt-4" v-show="mostrarLeyendas">
         <div class="col-2"><strong>ST:</strong> Sin turno</div>
+        <div class="col-2"><strong>PR:</strong> Permiso por reunión</div>
+        <div class="col-2"><strong>LCGT:</strong> Local cubierto gestor sin teléfono</div>
         <div class="col-2"><strong>PC:</strong> Permiso por capacitación</div>
         <div class="col-2"><strong>PR:</strong> Permiso trabajo en terreno</div>
         <div class="col-2"><strong>PAC:</strong> Permiso apoyo campaña</div>
@@ -124,6 +129,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { usePermisosStore } from '@/stores/permisos.js'
+
+const useStore = usePermisosStore()
 
 const props = defineProps({
   apiResponse: {
@@ -149,6 +157,55 @@ const formatHoras = (horas) => {
   return '00:00:00';
 };
 
+const stringToNumber = (str) => {
+  return Number(str);
+}
+
+const getResumenPermiso = (idPermiso) => {
+  idPermiso = stringToNumber(idPermiso);
+  const permiso = useStore.permisosData.find((permiso) => permiso.ID_Permiso === idPermiso);
+  return permiso ? permiso.Resumen : '';
+};
+
+const stringToSeconds = (str) => {
+  if (str === null) {
+    return 0; // O cualquier otro valor predeterminado que desees usar
+  }
+  const [horas, minutos, segundos] = str.split(':');
+  return Number(horas) * 3600 + Number(minutos) * 60 + Number(segundos);
+};
+
+let horasTrabajadas = 0;
+props.apiResponse.reporte_jornada_diaria.forEach(item => {
+  horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
+});
+
+let horasNoTrabajadas = 0;
+props.apiResponse.reporte_jornada_diaria.forEach(item => {
+  horasNoTrabajadas += stringToSeconds(item.HorasNoTrabajadas);
+});
+
+let horasDeAtraso = 0;
+props.apiResponse.reporte_jornada_diaria.forEach(item => {
+  horasDeAtraso += stringToSeconds(item.HorasAtraso);
+});
+
+let horasExtra = 0;
+props.apiResponse.reporte_jornada_diaria.forEach(item => {
+  horasExtra += stringToSeconds(item.HorasExtras);
+});
+
+const secondsToHHMMSS = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  const hoursStr = hours.toString().padStart(2, '0');
+  const minutesStr = minutes.toString().padStart(2, '0');
+  const secondsStr = remainingSeconds.toString().padStart(2, '0');
+
+  return `${hoursStr}:${minutesStr}:${secondsStr}`;
+};
 </script>
 
 <style scoped>
@@ -157,7 +214,7 @@ const formatHoras = (horas) => {
 }
 
 .tabla-por-usuario {
-  max-height: 390px;
+  max-height: 500px;
   overflow-y: auto
 }
 
@@ -166,5 +223,23 @@ const formatHoras = (horas) => {
   font-weight: 600;
   margin-top: 13px;
   margin-left: 10px;
+}
+
+.table thead th.sticky-top {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+}
+
+.table tfoot td {
+  position: sticky;
+  bottom: 0;
+  background-color: #f8f9fa;
+}
+
+.totales {
+  font-weight: 400;
+  font-size: 12px;
+  color: #BA0011;
 }
 </style>
