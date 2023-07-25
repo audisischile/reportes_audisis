@@ -23,8 +23,8 @@
           <CoberturaTotal :apiResponse="useStore.apiResponse"></CoberturaTotal>
         </div>
         <div class="col-4">
-          <div class="card shadow" style="overflow-y: auto; height: 100%;">
-            <div class="card-body">
+          <div class="shadow" style="overflow-y: auto; height: 100%;">
+            <div class="">
               <GraficoUsuarios :datosUsuarios="useStore.apiResponse.porcentaje_locales" class="shadow" />
             </div>
           </div>
@@ -34,12 +34,11 @@
       <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria>
     </div>
   </div>
-  {{ useStore.client_id }}
 </template>
 
 <script setup>
 import { useApiStore } from '@/stores/conexiones.js';
-import { onBeforeUnmount, defineProps, onMounted  } from 'vue'
+import { onBeforeUnmount, onMounted  } from 'vue'
 import Chart from 'chart.js/auto';
 import IndicadoresGlobales from '@/components/IndicadoresGlobales.vue'
 import CoberturaPermanencia from '@/components/CoberturaPermanencia.vue'
@@ -49,12 +48,17 @@ import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
 import JornadaDiaria from '@/components/JornadaDiaria.vue'
 import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
 
+const useStore = useApiStore();
+
 const props = defineProps({
   clientId: Number,
 });
 
-const useStore = useApiStore();
-useStore.getData(props.client_id);
+useStore.getData();
+
+onMounted(() =>{
+  useStore.updateClientId(props.clientId)
+})
 
 onBeforeUnmount(()=>{
   useStore.resetData()

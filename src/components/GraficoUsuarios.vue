@@ -1,27 +1,37 @@
 <template>
-  <div class="col align-center">
-    <h6 class="card-subtitle mb-4 text-body-secondary titulo-tabla-cobertura">
-      <!-- <i class="bi bi-table"></i>  -->
-      <span style="color: #BA0011">COBERTURA POR USUARIO</span></h6>
-    <button @click="toggleOrden" class="icon-button">
-      <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
-    </button>
-  </div>
-  <div class="scroll-container">
-    <table class="tabla-cobertura">
-      <tbody>
-        <tr v-for="(item, index) in usuariosCobertura" :key="index">
-          <td class="usuario">{{ obtenerPrimerasDosPalabras(item.usuario.toUpperCase()) }}</td>
-          <td>
-            <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label" :aria-valuenow="item.cobertura"
-              aria-valuemin="0" aria-valuemax="100">
-              <div class="progress-bar" :style="{ width: item.cobertura + '%', backgroundColor: '#f97013', height:'16px' }"><span style="color: rgb(230, 230, 230);">{{
-                aproximar(item.cobertura) }}%</span> </div>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="card tabla-por-usuario shadow">
+    <div style="background-color: #BA0011;" class="row">
+      <div class="col-10">
+        <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
+          <span style="color: rgb(244, 244, 244)">COBERTURA POR USUARIO</span>
+        </h6>
+      </div>
+      <div class="col-2">
+        <button @click="toggleOrden" class="icon-button mt-2" style="color: white;">
+          <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="scroll-container ps-2 pe-2">
+      <table class="tabla-cobertura">
+        <tbody>
+          <tr v-for="(item, index) in usuariosCobertura" :key="index">
+            <td class="usuario">{{ obtenerPrimerasDosPalabras(item.usuario.toUpperCase()) }}</td>
+            <td>
+              <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
+                :aria-valuenow="item.cobertura" aria-valuemin="0" aria-valuemax="100">
+                <div class="progress-bar"
+                  :style="{ width: item.cobertura + '%', backgroundColor: '#f97013', height: '16px' }"><span
+                    style="color: rgb(230, 230, 230);">{{
+                      aproximar(item.cobertura) }}%</span> </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
 
@@ -81,7 +91,7 @@ ordenarUsuariosCobertura();
 
 <style scoped>
 .scroll-container {
-  max-height: 315px;
+  max-height: 350px;
   overflow-y: auto;
 }
 
@@ -91,6 +101,22 @@ ordenarUsuariosCobertura();
   justify-content: space-between;
 }
 
+.tabla-por-usuario {
+  max-height: 390px;
+  overflow-y: auto
+}
+
+.titulo-por-usuario {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 13px;
+  margin-left: 10px;
+}
+
+.card {
+  border-radius: 0px;
+}
+
 .align-center {
   align-items: center;
 }
@@ -98,7 +124,7 @@ ordenarUsuariosCobertura();
 .tabla-cobertura {
   width: 100%;
   border-collapse: collapse;
-  border: none; 
+  border: none;
 }
 
 .usuario {
@@ -114,11 +140,11 @@ ordenarUsuariosCobertura();
   padding: 0;
 }
 
-.custom-progress-bar{
+.custom-progress-bar {
   border-radius: 0;
-  height: 15px; 
+  height: 15px;
   min-width: 100px;
-  border: none; 
+  border: none;
 }
 
 .titulo-tabla-cobertura {
@@ -126,5 +152,4 @@ ordenarUsuariosCobertura();
   font-weight: 600;
   margin-left: 0px;
 }
-
 </style>
