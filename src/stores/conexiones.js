@@ -14,6 +14,10 @@ export const useApiStore = defineStore("api", () => {
   const fechaInicio = ref(new Date());
   const fechaFin = ref(new Date());
   const clientId = ref(0);
+
+
+
+
   //Modo de prueba desde TEST API
   const devMode = false;
 
@@ -33,8 +37,8 @@ export const useApiStore = defineStore("api", () => {
     loading.value = true;
     try {
       const response = await axios.post(
-        // "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
           fecha_inicio: fechaParaQuery(fechaInicio.value),
@@ -51,6 +55,7 @@ export const useApiStore = defineStore("api", () => {
         const reg = /\uFEFF/g;
         const newResponse = response.data.trim().replace(reg, "");
         apiResponse.value = JSON.parse(newResponse);
+        cadenas.value = apiResponse.value.porcentaje_cadena;
       } else {
         apiResponse.value = null;
       }
@@ -59,6 +64,7 @@ export const useApiStore = defineStore("api", () => {
       // Verificar si apiResponse.value no es null antes de acceder a las propiedades
       if (apiResponse.value !== null) {
         cadenas.value = apiResponse.value.porcentaje_cadena;
+        console.log(apiResponse.value.porcentaje_cadena)
       } else {
         cadenas.value = [];
       }
@@ -72,8 +78,8 @@ export const useApiStore = defineStore("api", () => {
     updating.value = true;
     try {
       const response = await axios.post(
-        // "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
           fecha_inicio: fechaParaQuery(fechaInicio.value),
@@ -91,17 +97,18 @@ export const useApiStore = defineStore("api", () => {
         const reg = /\uFEFF/g;
         const newResponse = response.data.trim().replace(reg, "");
         apiResponse.value = JSON.parse(newResponse);
+        cadenas.value = apiResponse.value.porcentaje_cadena;
       } else {
         apiResponse.value = null;
       }
 
       updating.value = false;
       // Verificar si apiResponse.value no es null antes de acceder a las propiedades
-      if (apiResponse.value !== null) {
-        cadenas.value = apiResponse.value.porcentaje_cadena;
-      } else {
-        cadenas.value = [];
-      }
+      // if (apiResponse.value !== null) {
+      //   cadenas.value = apiResponse.value.porcentaje_cadena;
+      // } else {
+      //   cadenas.value = [];
+      // }
     } catch (error) {
       console.log(error);
     }
@@ -110,38 +117,38 @@ export const useApiStore = defineStore("api", () => {
   
 
   const localesFiltrados = computed(() => {
-    if (apiResponse.value !== null) {
-      if (localSeleccionado.value === 0) {
-        return apiResponse.value.Detalle_Total;
-      } else {
-        return apiResponse.value.Detalle_Total.filter(
-          (item) => item.ID_Cadena === cadenaSeleccionada.value
-        );
+    const uniqueLocales = new Set();
+    apiResponse.value.Detalle_Total.forEach((item) => {
+      if (
+        (cadenaSeleccionada.value === 0 || item.ID_Cadena === cadenaSeleccionada.value) &&
+        (localSeleccionado.value === 0 || item.ID_Local === localSeleccionado.value)
+      ) {
+        uniqueLocales.add(item.ID_Local);
       }
-    } else {
-      return [];
-    }
+    });
+  
+    const filteredLocales = Array.from(uniqueLocales).map((localId) => {
+      return apiResponse.value.Detalle_Total.find((item) => item.ID_Local === localId);
+    });
+  
+    return filteredLocales;
   });
 
   
 
   const UsuarioFiltrado = computed(() => {
-    const uniqueUsers = new Set(); // Conjunto para almacenar usuarios únicos
-  
-    // Filtrar los datos y agregar usuarios únicos al conjunto
+    const uniqueUsers = new Set(); 
     apiResponse.value.Detalle_Total.forEach((item) => {
       if (
         (cadenaSeleccionada.value === 0 || item.NombreCadena === cadenaSeleccionada.value) &&
         (localSeleccionado.value === 0 || item.ID_Local === localSeleccionado.value) &&
         (usuarioSeleccionado.value === 0 || item.Id_usuario === usuarioSeleccionado.value)
       ) {
-        uniqueUsers.add(item.Id_usuario); // Agregar el Id_usuario al conjunto
+        uniqueUsers.add(item.Id_usuario);
       }
     });
   
-    // Convertir el conjunto de usuarios únicos a un array de objetos
     const filteredUsers = Array.from(uniqueUsers).map((userId) => {
-      // Buscar el objeto correspondiente al usuario en el array original
       return apiResponse.value.Detalle_Total.find((item) => item.Id_usuario === userId);
     });
   

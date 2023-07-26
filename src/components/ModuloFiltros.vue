@@ -1,5 +1,5 @@
 <template>
-  <div class="row align-items-center me-1">
+  <div class="row align-items-center me-1 mb-3">
     <div class="col-5">
       <div class="row align-items-center">
         <div class="col-7">
@@ -106,7 +106,7 @@ function diaFormateado(date) {
 
 <style scoped>
 .logo {
-  width: 250px;
+  width: 150px;
 }
 
 .botonera {

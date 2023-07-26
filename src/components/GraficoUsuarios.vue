@@ -16,7 +16,7 @@
     <div class="scroll-container ps-2 pe-2">
       <table class="tabla-cobertura">
         <tbody>
-          <tr v-for="(item, index) in usuariosCobertura" :key="index">
+          <tr v-for="(item, index) in usuariosCobertura">
             <td class="usuario">{{ obtenerPrimerasDosPalabras(item.usuario.toUpperCase()) }}</td>
             <td>
               <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
@@ -103,7 +103,7 @@ ordenarUsuariosCobertura();
 
 .tabla-por-usuario {
   max-height: 390px;
-  overflow-y: auto
+  overflow-y: auto;
 }
 
 .titulo-por-usuario {
