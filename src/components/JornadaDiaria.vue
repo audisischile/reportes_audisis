@@ -1,10 +1,17 @@
 <template>
   <div class="card tabla-por-usuario shadow mb-4">
-    <div style="background-color: #BA0011;">
-      <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-3">
-        <span style="color:rgb(244, 244, 244)"> JORNADA DIARIA</span>
-      </h6>
-    </div>
+    <div style="background-color: #BA0011;" class="row">
+            <div class="col-11">
+                <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
+                    <span style="color: rgb(244, 244, 244)">JORNADA DIARIA</span>
+                </h6>
+            </div>
+            <div class="col-1">
+                <button @click="toggleOrden" class="icon-button mt-2" style="color: wh¡ite;">
+                    <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+                </button>
+            </div>
+        </div>
     <div class="table-responsive">
       <table class="table titulo-tabla table-hover table-striped"
         style="font-size: 11px; font-family: Roboto, sans-serif;">
@@ -13,8 +20,8 @@
             <th scope="col" class="sticky-top col-1">Día</th>
             <th scope="col" class="sticky-top col-1">Usuario</th>
             <th scope="col" class="sticky-top">Hora Entrada</th>
-            <th scope="col" class="sticky-top">Marca Entrada</th>
             <th scope="col" class="sticky-top">Hora Salida</th>
+            <th scope="col" class="sticky-top">Marca Entrada</th>
             <th scope="col" class="sticky-top">Marca Salida</th>
             <th scope="col" class="sticky-top">Permiso</th>
             <th scope="col" class="sticky-top">HT</th>
@@ -36,8 +43,8 @@
               <div>{{ item.NombreTrabajador }}</div>
             </td>
             <td>{{ item.TurnoEntrada }}</td>
-            <td>{{ item.MarcaEntrada }}</td>
             <td>{{ item.TurnoSalida }}</td>
+            <td>{{ item.MarcaEntrada }}</td>
             <td>{{ item.MarcaSalida }}</td>
             <td>{{ getResumenPermiso(item.ID_Permiso) }}</td>
             <td>{{ item.HorasTrabajadas }}</td>
@@ -140,6 +147,13 @@ const props = defineProps({
   }
 })
 
+const ordenAscendente = ref(true);
+
+const toggleOrden = () => {
+  ordenAscendente.value = !ordenAscendente.value;
+  ordenarData();
+};
+
 const mostrarLeyendas = ref(false);
 const toggleLeyendas = () => {
   mostrarLeyendas.value = !mostrarLeyendas.value;
@@ -148,7 +162,7 @@ const toggleLeyendas = () => {
 const formatHoras = (horas) => {
   if (horas !== null) {
     const tiempo = new Date(0);
-    tiempo.setSeconds(horas); // Convierte los segundos a formato HH:MM:SS
+    tiempo.setSeconds(horas);
     const horasStr = tiempo.getUTCHours().toString().padStart(2, '0');
     const minutosStr = tiempo.getUTCMinutes().toString().padStart(2, '0');
     const segundosStr = tiempo.getUTCSeconds().toString().padStart(2, '0');
@@ -169,7 +183,7 @@ const getResumenPermiso = (idPermiso) => {
 
 const stringToSeconds = (str) => {
   if (str === null) {
-    return 0; // O cualquier otro valor predeterminado que desees usar
+    return 0;
   }
   const [horas, minutos, segundos] = str.split(':');
   return Number(horas) * 3600 + Number(minutos) * 60 + Number(segundos);
@@ -206,9 +220,42 @@ const secondsToHHMMSS = (seconds) => {
 
   return `${hoursStr}:${minutesStr}:${secondsStr}`;
 };
+
+const ordenarData = () => {
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const fechaA = new Date(a.Fecha);
+    const fechaB = new Date(b.Fecha);
+    return ordenAscendente.value ? fechaA - fechaB : fechaB - fechaA;
+  });
+
+  calcularTotales();
+};
+
+const calcularTotales = () => {
+  horasTrabajadas = 0;
+  horasNoTrabajadas = 0;
+  horasDeAtraso = 0;
+  horasExtra = 0;
+  props.apiResponse.reporte_jornada_diaria.forEach(item => {
+    horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
+    horasNoTrabajadas += stringToSeconds(item.HorasNoTrabajadas);
+    horasDeAtraso += stringToSeconds(item.HorasAtraso);
+    horasExtra += stringToSeconds(item.HorasExtras);
+  });
+};
+
+ordenarData();
 </script>
 
 <style scoped>
+.icon-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    color: white;
+}
 .card {
   border-radius: 0px;
 }

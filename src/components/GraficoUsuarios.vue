@@ -13,18 +13,17 @@
       </div>
     </div>
 
-    <div class="scroll-container ps-2 pe-2">
+    <div class="scroll-container ps-2 pe-2 mt-2">
       <table class="tabla-cobertura">
         <tbody>
-          <tr v-for="(item, index) in usuariosCobertura">
-            <td class="usuario">{{ obtenerPrimerasDosPalabras(item.usuario.toUpperCase()) }}</td>
+          <tr v-for="(item, index) in usuariosCobertura" :key="index">
+            <td class="usuario">{{ item.nombre ? obtenerPrimerasDosPalabras(item.nombre.toUpperCase()) : '' }}</td>
             <td>
               <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
-                :aria-valuenow="item.cobertura" aria-valuemin="0" aria-valuemax="100">
+                :aria-valuenow="item.coberturaPromedio" aria-valuemin="0" aria-valuemax="100">
                 <div class="progress-bar"
-                  :style="{ width: item.cobertura + '%', backgroundColor: '#f97013', height: '16px' }"><span
-                    style="color: rgb(230, 230, 230);">{{
-                      aproximar(item.cobertura) }}%</span> </div>
+                  :style="{ width: item.coberturaPromedio + '%', backgroundColor: '#f97013', height: '16px' }"><span
+                    style="color: rgb(230, 230, 230);">{{ aproximar(item.coberturaPromedio) }}%</span> </div>
               </div>
             </td>
           </tr>
@@ -49,11 +48,42 @@ const props = defineProps({
 const usuariosCobertura = ref([]);
 const ordenAscendente = ref(false);
 
+function toggleOrden() {
+  ordenAscendente.value = !ordenAscendente.value;
+  ordenarUsuariosCobertura();
+}
+
 const crearUsuariosCobertura = () => {
-  usuariosCobertura.value = props.datosUsuarios.map((usuario) => ({
-    usuario: usuario.Usuario,
-    cobertura: (usuario.locales_completados / usuario.locales_programadas) * 100,
-  }));
+  const usuarios = {};
+
+  props.datosUsuarios.forEach((usuario) => {
+    // Verificar si el usuario ya existe en el objeto "usuarios"
+    if (usuarios.hasOwnProperty(usuario.Usuario)) {
+      // Si existe, actualizar el promedio
+      usuarios[usuario.Usuario].locales_completados += usuario.locales_completados;
+      usuarios[usuario.Usuario].locales_programadas += usuario.locales_programadas;
+      usuarios[usuario.Usuario].diasContados += 1;
+    } else {
+      // Si no existe, agregarlo al objeto "usuarios" con los datos del primer día
+      usuarios[usuario.Usuario] = {
+        nombre: usuario.Usuario,
+        locales_completados: usuario.locales_completados,
+        locales_programadas: usuario.locales_programadas,
+        diasContados: 1,
+      };
+    }
+  });
+
+  // Calcular el promedio para cada usuario
+  for (const key in usuarios) {
+    if (usuarios.hasOwnProperty(key)) {
+      const usuario = usuarios[key];
+      usuario.coberturaPromedio = (usuario.locales_completados / usuario.locales_programadas) * 100;
+    }
+  }
+
+  // Convertir el objeto "usuarios" en un arreglo para mostrarlo en la tabla
+  usuariosCobertura.value = Object.values(usuarios);
 };
 
 crearUsuariosCobertura();
@@ -61,16 +91,11 @@ crearUsuariosCobertura();
 const ordenarUsuariosCobertura = () => {
   usuariosCobertura.value.sort((a, b) => {
     if (ordenAscendente.value) {
-      return a.cobertura - b.cobertura;
+      return a.coberturaPromedio - b.coberturaPromedio;
     } else {
-      return b.cobertura - a.cobertura;
+      return b.coberturaPromedio - a.coberturaPromedio;
     }
   });
-};
-
-const toggleOrden = () => {
-  ordenAscendente.value = !ordenAscendente.value;
-  ordenarUsuariosCobertura();
 };
 
 const aproximar = (numero) => {

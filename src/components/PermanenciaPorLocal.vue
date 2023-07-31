@@ -1,10 +1,16 @@
 <template>
     <div class="card tabla-por-usuario shadow mb-4">
-        <div style="background-color: #BA0011;">
-            <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-3">
-                <!-- <i class="bi bi-table"></i> -->
-                <span style="color:rgb(244, 244, 244)"> PERMANENCIA POR LOCAL</span>
-            </h6>
+        <div style="background-color: #BA0011;" class="row">
+            <div class="col-11">
+                <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
+                    <span style="color: rgb(244, 244, 244)">PERMANENCIA POR LOCAL</span>
+                </h6>
+            </div>
+            <div class="col-1">
+                <button @click="toggleOrden" class="icon-button mt-2" style="color: wh¡ite;">
+                    <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+                </button>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table titulo-tabla table-hover table-striped"
@@ -41,12 +47,29 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 const props = defineProps({
     apiResponse: {
         type: Object,
         required: true
     }
 })
+
+let ordenAscendente = ref(true);
+
+const ordenarData = () => {
+  // Si ordenAscendente es true, ordenar de forma ascendente
+  // Si ordenAscendente es false, ordenar de forma descendente
+  props.apiResponse.Detalle_Total.sort((a, b) => {
+    const fechaA = new Date(a.fecha);
+    const fechaB = new Date(b.fecha);
+    return ordenAscendente.value ? fechaA - fechaB : fechaB - fechaA;
+  });
+};
+
+// Llamada inicial para ordenar los datos de manera ascendente
+ordenarData();
 
 const transformarMinutos = (minutos) => {
     let horas = Math.floor(minutos / 60);
@@ -64,10 +87,22 @@ const convertirFecha = (fecha) => {
     return fechaConvertida[2] + '/' + fechaConvertida[1] + '/' + fechaConvertida[0]
 }
 
+const toggleOrden = () => {
+  ordenAscendente.value = !ordenAscendente.value;
+  ordenarData();
+};
 
 </script>
 
 <style scoped>
+.icon-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    color: white;
+}
 .tabla-por-usuario {
     max-height: 390px;
     overflow-y: auto

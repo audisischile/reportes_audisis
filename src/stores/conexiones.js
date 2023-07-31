@@ -37,14 +37,14 @@ export const useApiStore = defineStore("api", () => {
     loading.value = true;
     try {
       const response = await axios.post(
-        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
-          fecha_inicio: fechaParaQuery(fechaInicio.value),
-          fecha_fin: fechaParaQuery(fechaFin.value),
-          // fecha_inicio: "2023-01-04",
-          // fecha_fin: "2023-01-10",
+          // fecha_inicio: fechaParaQuery(fechaInicio.value),
+          // fecha_fin: fechaParaQuery(fechaFin.value),
+          fecha_inicio: "2023-01-04",
+          fecha_fin: "2023-01-10",
           id_usuarios: [],
           id_locales: [],
           id_cadenas: [],
@@ -78,14 +78,14 @@ export const useApiStore = defineStore("api", () => {
     updating.value = true;
     try {
       const response = await axios.post(
-        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
-          fecha_inicio: fechaParaQuery(fechaInicio.value),
-          fecha_fin: fechaParaQuery(fechaFin.value),
-          // fecha_inicio: "2023-01-04",
-          // fecha_fin: "2023-01-10",
+          // fecha_inicio: fechaParaQuery(fechaInicio.value),
+          // fecha_fin: fechaParaQuery(fechaFin.value),
+          fecha_inicio: "2023-01-04",
+          fecha_fin: "2023-01-10",
           id_usuarios: [usuarioSeleccionado.value],
           id_locales: [localSeleccionado.value],
           id_cadenas: [cadenaSeleccionada.value],
