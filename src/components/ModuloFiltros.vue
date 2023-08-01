@@ -14,12 +14,12 @@
     <div class="col-7 p-3" style="background-color: #E8E8E8;">
       <div class="row d-flex justify-content-center align-items-center">
         <div class="col-5">
-          <label for="datepicker">Fecha inicio</label>
+          <label for="datepicker" class="titulo-fecha">Fecha inicio</label>
           <VueDatePicker v-model="useStore.fechaInicio" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
             selectText="Seleccionar" :format="diaFormateado" class="w-100"></VueDatePicker>
         </div>
         <div class="col-5">
-          <label for="datepicker">Fecha de fin</label>
+          <label for="datepicker" class="titulo-fecha">Fecha de fin</label>
           <VueDatePicker v-model="useStore.fechaFin" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
             selectText="Seleccionar" :format="diaFormateado" class="w-100"></VueDatePicker>
         </div>
@@ -43,10 +43,10 @@
                 {{ textoFiltroCadena }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
-                <form class="mx-2 my-2">
+                <!-- <form class="mx-2 my-2">
                   <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar"
                     v-model="cadenaSearchQuery">
-                </form>
+                </form> -->
                 <a class="dropdown-item" href="#" @click="limpiarCadena">
                   TODAS LAS CADENAS
                 </a>
@@ -121,7 +121,6 @@
       </div>
     </div>
   </div>
-  <!-- {{ filteredLocales }} -->
 </template>
 
 <script setup>
@@ -258,12 +257,24 @@ const usuarios = useStore.apiResponse.modulo_filtros.reduce((result, item) => {
 const usuarioSearchQuery = ref('');
 
 const filteredUsuarios = computed(() => {
-  if (useStore.cadenaSeleccionada === 0 || useStore.localSeleccionado === 0) {
+  if (useStore.cadenaSeleccionada === 0 && useStore.localSeleccionado === 0) {
     return usuarios.filter((item) => item.Usuario.toLowerCase().includes(usuarioSearchQuery.value?.toLowerCase()));
+  } else if (useStore.cadenaSeleccionada !== 0 && useStore.localSeleccionado === 0) {
+    return usuarios.filter(
+      (item) =>
+        item.ID_Cadena === useStore.cadenaSeleccionada &&
+        item.Usuario.toLowerCase().includes(usuarioSearchQuery.value?.toLowerCase())
+    );
+  } else if (useStore.cadenaSeleccionada !== 0 && useStore.localSeleccionado !== 0) {
+    return usuarios.filter(
+      (item) =>
+        item.ID_Cadena === useStore.cadenaSeleccionada &&
+        item.ID_Local === useStore.localSeleccionado &&
+        item.Usuario.toLowerCase().includes(usuarioSearchQuery.value?.toLowerCase())
+    );
   } else {
-    return usuarios.filter((item) => item.Usuario.toLowerCase().includes(usuarioSearchQuery.value?.toLowerCase()) && item.ID_Cadena === useStore.cadenaSeleccionada && item.ID_Local === useStore.localSeleccionado);
+    return [];
   }
-
 });
 
 const setUsuario = (id_cadena, id_local, id_usuario) => {
@@ -282,11 +293,16 @@ const textoFiltroUsuario = computed(() => {
 });
 
 
+
+
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
-
+.titulo-fecha{
+  font-size: 14px;
+  color: #838383;
+}
 .btn {
   max-width: 100%;
   white-space: nowrap;
@@ -336,6 +352,7 @@ const textoFiltroUsuario = computed(() => {
 .dropdown-menu-custom {
   font-size: 13px;
   text-transform: uppercase;
+  
 }
 
 .dropdown-toggle {

@@ -11,8 +11,8 @@
                     <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
                 </button>
             </div>
-            <!-- <div :class="mostrarSearchInput ? 'col-3 nput-group input-group-sm' : 'd-none'">
-                <input class="searchInput input-group-text" v-if="mostrarSearchInput" type="text">
+            <!-- <div :class="mostrarSearchInput ? 'col-3 nput-group input-group-sm wrapper' : 'd-none'">
+                <input id="slide" class="searchInput input-group-text" v-if="mostrarSearchInput" type="text" placeholder="Busqueda">
             </div>
             <div class="col-1">
                 <button @click="mostrarSearchInput = !mostrarSearchInput" class="icon-button mt-2" style="color: white;">
@@ -66,7 +66,7 @@ const props = defineProps({
 })
 
 let ordenAscendente = ref(true);
-const mostrarSearchInput = ref(true);
+const mostrarSearchInput = ref(false);
 
 const convertirFecha = (fecha) => {
     let fechaConvertida = fecha.split('-')
@@ -116,9 +116,15 @@ const toggleOrden = () => {
     color: white;
 }
 
+input::placeholder {
+  color: rgb(232, 230, 230);
+}
+
 .searchInput {
     background-color: #BA0011;
     margin-top: 5px;
+    color: white;
+    border-color: white;
 }
 .tabla-por-usuario {
     max-height: 390px;
@@ -135,4 +141,6 @@ const toggleOrden = () => {
 .card {
     border-radius: 0px;
 }
+
+
 </style>

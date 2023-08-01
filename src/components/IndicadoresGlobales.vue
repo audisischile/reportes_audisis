@@ -13,7 +13,7 @@
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <div class="col-6">
-              <span class="indicador-texto" style="color: white;">Locales programados</span>
+              <span class="indicador-texto">Locales programados</span>
             </div>
           </div>
         </div>
@@ -31,7 +31,7 @@
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <div class="col-6">
-              <span class="indicador-texto" style="color: white">Locales completados</span>
+              <span class="indicador-texto">Locales completados</span>
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <div class="col-6">
-              <span class="indicador-texto" style="color: white">Locales iniciados</span>
+              <span class="indicador-texto">Locales iniciados</span>
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@
           </div>
           <div class="d-flex align-items-center justify-content-between">
             <div class="col-6">
-              <span class="indicador-texto" style="color: white">Locales pendientes</span>
+              <span class="indicador-texto">Locales pendientes</span>
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@ const props = defineProps(['apiResponse'])
 
 .indicador-texto {
   font-size: 12px;
-  color: rgb(136, 136, 136);
+  color: rgb(227, 227, 227);
   font-family: "Fira Sans", sans-serif;
 }
 

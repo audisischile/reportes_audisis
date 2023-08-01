@@ -191,7 +191,6 @@ export const useApiStore = defineStore("api", () => {
     getData();
   }
 
-
   watch(cadenaSeleccionada, () => {
     updateData()
   })

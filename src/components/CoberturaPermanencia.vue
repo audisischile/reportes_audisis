@@ -46,7 +46,7 @@
 
 
             <div class="col-6">
-                <GraficoCobertura :apiResponse="apiResponse"/>
+                <GraficoCobertura :apiResponse="apiResponse" />
             </div>
 
             <div class="col-4">
@@ -70,8 +70,10 @@
                                                 item.NombreCadenaReal }}</span>
                                         </div>
                                     </td>
-                                    <td class="tabla-cadenas-num text-center align-middle">{{ item.Porcentaje_Cobertura_Mensual }}%</td>
-                                    <td class="tabla-cadenas-num text-center align-middle">{{ item.Porcentaje_Permanencia_Mensual }}%</td>
+                                    <td class="tabla-cadenas-num text-center align-middle">{{
+                                        item.Porcentaje_Cobertura_Mensual }}%</td>
+                                    <td class="tabla-cadenas-num text-center align-middle">{{
+                                        item.Porcentaje_Permanencia_Mensual }}%</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -96,42 +98,63 @@ const props = defineProps({
 </script>
 
 <style scoped>
+.sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* Color de fondo del encabezado fijo */
+    z-index: 1; /* Asegurar que el encabezado esté en la capa superior */
+}
+
+/* Ajuste de estilos para que el contenido se desplace debajo del encabezado fijo */
+.table-responsive {
+    position: relative;
+    overflow: auto;
+    height: 400px; /* Altura máxima del contenedor de la tabla */
+}
+
+.table {
+    margin-bottom: 0; /* Evitar que la tabla se desplace fuera del contenedor */
+}
 .caja {
-  color: #727272;
-  height: 260px;
-  overflow-y: auto;
+    color: #727272;
+    height: 260px;
+    overflow-y: auto;
 }
+
 .tabla-datos-periodo-titulos th {
-  font-size: 9px;
-  font-weight: 200;
-  color: rgb(136, 136, 136);
-  text-transform: uppercase;
-  font-family: "Roboto", sans-serif;
-  text-align: center;
+    font-size: 9px;
+    font-weight: 600;
+    color: rgb(136, 136, 136);
+    text-transform: uppercase;
+    font-family: "Roboto", sans-serif;
+    text-align: center;
 }
+
 .cadena-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .nombre-cadena {
-  font-size: 10px;
-  display: block;
-  color: rgb(136, 136, 136);
+    font-size: 10px;
+    display: block;
+    color: rgb(136, 136, 136);
 }
 
 
 .logo-cadena {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
 }
 
 .contenedor {
-  padding: 1em;;
+    padding: 1em;
+    ;
 }
+
 .kpi-cobertura {
     color: #727272;
 }
@@ -171,26 +194,26 @@ const props = defineProps({
     -webkit-text-fill-color: transparent;
 
 }
+
 .card {
-  border-radius: 0px;
+    border-radius: 0px;
 }
 
 .progress-bar {
-  font-size: 10px;
+    font-size: 10px;
 }
 
 .progress {
-  border-radius: 0;
+    border-radius: 0;
 }
+
 .custom-progress-bar {
-  border-radius: 0;
-  height: 100%;
+    border-radius: 0;
+    height: 100%;
 }
 
 .indicador-numero {
-  font-size: 30px;
-  color: rgb(136, 136, 136);
-  font-family: "Oswald", sans-serif;
-}
-
-</style>
+    font-size: 30px;
+    color: rgb(136, 136, 136);
+    font-family: "Oswald", sans-serif;
+}</style>
