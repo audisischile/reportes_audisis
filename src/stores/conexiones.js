@@ -55,13 +55,13 @@ export const useApiStore = defineStore("api", () => {
         const reg = /\uFEFF/g;
         const newResponse = response.data.trim().replace(reg, "");
         apiResponse.value = JSON.parse(newResponse);
+        console.log(apiResponse.value.porcentaje_cadena ? apiResponse.value.porcentaje_cadena : "No hay datos")
         cadenas.value = apiResponse.value.porcentaje_cadena;
       } else {
         apiResponse.value = null;
       }
 
       loading.value = false;
-      // Verificar si apiResponse.value no es null antes de acceder a las propiedades
       if (apiResponse.value !== null) {
         cadenas.value = apiResponse.value.porcentaje_cadena;
         console.log(apiResponse.value.porcentaje_cadena)

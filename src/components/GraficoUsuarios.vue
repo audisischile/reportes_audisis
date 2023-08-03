@@ -36,14 +36,11 @@
 
  
 <script setup>
-import { ref, defineProps } from 'vue';
+import { ref } from 'vue';
+import { useApiStore } from '@/stores/conexiones.js';
 
-const props = defineProps({
-  datosUsuarios: {
-    type: Array,
-    required: true,
-  },
-});
+
+const useStore = useApiStore();
 
 const usuariosCobertura = ref([]);
 const ordenAscendente = ref(false);
@@ -56,7 +53,7 @@ function toggleOrden() {
 const crearUsuariosCobertura = () => {
   const usuarios = {};
 
-  props.datosUsuarios.forEach((usuario) => {
+  useStore.apiResponse.porcentaje_locales.forEach((usuario) => {
     // Verificar si el usuario ya existe en el objeto "usuarios"
     if (usuarios.hasOwnProperty(usuario.Usuario)) {
       // Si existe, actualizar el promedio

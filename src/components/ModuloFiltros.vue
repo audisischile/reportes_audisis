@@ -43,10 +43,10 @@
                 {{ textoFiltroCadena }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
-                <!-- <form class="mx-2 my-2">
-                  <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar"
-                    v-model="cadenaSearchQuery">
-                </form> -->
+                <form class="mx-2 my-2">
+                  <!-- <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar"
+                    v-model="cadenaSearchQuery"> -->
+                </form>
                 <a class="dropdown-item" href="#" @click="limpiarCadena">
                   TODAS LAS CADENAS
                 </a>

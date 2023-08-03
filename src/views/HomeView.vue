@@ -34,6 +34,7 @@
       <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria>
     </div>
   </div>
+
 </template>
 
 <script setup>
