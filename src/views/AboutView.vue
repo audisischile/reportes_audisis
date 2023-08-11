@@ -37,7 +37,7 @@ const conexionTest = async () => {
 const conexionProd = async () => {
   try {
     const response = await axios.post(
-      "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+      "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
       {
         id_cliente: 82,
         fecha_inicio: "2023-01-04",

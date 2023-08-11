@@ -37,7 +37,7 @@ export const useApiStore = defineStore("api", () => {
     loading.value = true;
     try {
       const response = await axios.post(
-        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
         // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
@@ -78,7 +78,7 @@ export const useApiStore = defineStore("api", () => {
     updating.value = true;
     try {
       const response = await axios.post(
-        "https://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
         // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,

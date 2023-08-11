@@ -16,12 +16,12 @@
         <div class="col-5">
           <label for="datepicker" class="titulo-fecha">Fecha inicio</label>
           <VueDatePicker v-model="useStore.fechaInicio" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
-            selectText="Seleccionar" :format="diaFormateado" class="w-100"></VueDatePicker>
+            selectText="Seleccionar" :format="diaFormateado" class="w-100" auto-apply></VueDatePicker>
         </div>
         <div class="col-5">
           <label for="datepicker" class="titulo-fecha">Fecha de fin</label>
           <VueDatePicker v-model="useStore.fechaFin" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
-            selectText="Seleccionar" :format="diaFormateado" class="w-100"></VueDatePicker>
+            selectText="Seleccionar" :format="diaFormateado" class="w-100" auto-apply></VueDatePicker>
         </div>
         <div class="col-2">
           <button class="btn mt-4 w-100"
@@ -121,6 +121,12 @@
       </div>
     </div>
   </div>
+  <!-- {{ useStore.cadenaSeleccionada }}
+  {{ useStore.localSeleccionado }}
+  {{ useStore.usuarioSeleccionado }}
+  {{ filteredCadenas }}
+  {{ filteredLocales }}
+  {{ filteredUsuarios }} -->
 </template>
 
 <script setup>

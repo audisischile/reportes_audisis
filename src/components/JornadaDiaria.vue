@@ -1,17 +1,17 @@
 <template>
   <div class="card tabla-por-usuario shadow mb-4">
     <div style="background-color: #BA0011;" class="row">
-            <div class="col-11">
-                <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
-                    <span style="color: rgb(244, 244, 244)">JORNADA DIARIA</span>
-                </h6>
-            </div>
-            <div class="col-1">
-                <button @click="toggleOrden" class="icon-button mt-2" style="color: wh¡ite;">
-                    <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
-                </button>
-            </div>
-        </div>
+      <div class="col-11">
+        <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
+          <span style="color: rgb(244, 244, 244)">JORNADA DIARIA</span>
+        </h6>
+      </div>
+      <div class="col-1">
+        <!-- <button @click="toggleOrden" class="icon-button mt-2" style="color: wh¡ite;">
+          <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+        </button> -->
+      </div>
+    </div>
     <div class="table-responsive">
       <table class="table titulo-tabla table-hover table-striped"
         style="font-size: 11px; font-family: Roboto, sans-serif;">
@@ -27,11 +27,32 @@
             <th scope="col" class="sticky-top">HT</th>
             <th scope="col" class="sticky-top">HP</th>
             <th scope="col" class="sticky-top">HNT</th>
-            <th scope="col" class="sticky-top">Tiempo de atraso</th>
-            <th scope="col" class="sticky-top">Adelanto de salida</th>
-            <th scope="col" class="sticky-top">HES</th>
-            <th scope="col" class="sticky-top">Entrada Colación</th>
-            <th scope="col" class="sticky-top">Salida Colación</th>
+            <th scope="col" class="sticky-top">Tiempo de atraso
+              <button @click="ordenarTiempoAtraso" class="icon-button mt-2" style="color: wh¡ite;">
+                <i :class="ordenTiempoAtrasoAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+              </button>
+            </th>
+            <th scope="col" class="sticky-top">Adelanto de salida
+              <button @click="ordenarAdelantoSalida" class="icon-button mt-2" style="color: wh¡ite;">
+                <i :class="ordenAdelantoSalidaAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+              </button>
+            </th>
+            <th scope="col" class="sticky-top">
+              <div class="col-12">HES</div>
+              <button @click="ordenarHES" class="icon-button mt-2" style="color: wh¡ite;">
+                <i :class="ordenAscendenteHES ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+              </button>
+            </th>
+            <th scope="col" class="sticky-top">Entrada Colación
+              <button @click="ordenarEntradaColacion" class="icon-button mt-2" style="color: wh¡ite;">
+                <i :class="ordenAscendenteEntradaColacion ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+              </button>
+            </th>
+            <th scope="col" class="sticky-top">Salida Colación
+              <button @click="ordenarSalidaColacion" class="icon-button mt-2" style="color: wh¡ite;">
+                <i :class="ordenAscendenteSalidaColacion ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+              </button>
+            </th>
             <th scope="col" class="sticky-top">TC</th>
           </tr>
         </thead>
@@ -148,6 +169,11 @@ const props = defineProps({
 })
 
 const ordenAscendente = ref(true);
+let ordenTiempoAtrasoAscendente = true;
+let ordenAdelantoSalidaAscendente = true;
+let ordenAscendenteHES = true;
+let ordenAscendenteEntradaColacion = true;
+let ordenAscendenteSalidaColacion = true
 
 const toggleOrden = () => {
   ordenAscendente.value = !ordenAscendente.value;
@@ -244,18 +270,86 @@ const calcularTotales = () => {
   });
 };
 
-ordenarData();
+// ordenarData();
+
+const ordenarTiempoAtraso = () => {
+  ordenTiempoAtrasoAscendente = !ordenTiempoAtrasoAscendente;
+
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const tiempoAtrasoA = stringToSeconds(a.HorasAtraso);
+    const tiempoAtrasoB = stringToSeconds(b.HorasAtraso);
+
+    return ordenTiempoAtrasoAscendente ? tiempoAtrasoA - tiempoAtrasoB : tiempoAtrasoB - tiempoAtrasoA;
+  });
+
+  calcularTotales();
+};
+
+const ordenarAdelantoSalida = () => {
+  ordenAdelantoSalidaAscendente = !ordenAdelantoSalidaAscendente;
+
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const adelantoSalidaA = stringToSeconds(a.HorasAdelanto);
+    const adelantoSalidaB = stringToSeconds(b.HorasAdelanto);
+
+    return ordenAdelantoSalidaAscendente ? adelantoSalidaA - adelantoSalidaB : adelantoSalidaB - adelantoSalidaA;
+  });
+
+  calcularTotales();
+};
+
+const ordenarHES = () => {
+  ordenAscendenteHES = !ordenAscendenteHES;
+
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const horasExtrasSalidaA = stringToSeconds(a.HorasExtras);
+    const horasExtrasSalidaB = stringToSeconds(b.HorasExtras);
+
+    return ordenAscendenteHES ? horasExtrasSalidaA - horasExtrasSalidaB : horasExtrasSalidaB - horasExtrasSalidaA;
+  });
+
+  calcularTotales();
+};
+
+const ordenarEntradaColacion = () => {
+  ordenAscendenteEntradaColacion = !ordenAscendenteEntradaColacion;
+
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const entradaColacionA = a.EntradaColacion === "-:-:-" ? -1 : stringToSeconds(a.EntradaColacion);
+    const entradaColacionB = b.EntradaColacion === "-:-:-" ? -1 : stringToSeconds(b.EntradaColacion);
+
+    return ordenAscendenteEntradaColacion ? entradaColacionA - entradaColacionB : entradaColacionB - entradaColacionA;
+  });
+
+  calcularTotales();
+};
+
+const ordenarSalidaColacion = () => {
+  ordenAscendenteSalidaColacion = !ordenAscendenteSalidaColacion;
+
+  props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
+    const salidaColacionA = a.SalidaColacion === "-:-:-" ? -1 : stringToSeconds(a.SalidaColacion);
+    const salidaColacionB = b.SalidaColacion === "-:-:-" ? -1 : stringToSeconds(b.SalidaColacion);
+
+    return ordenAscendenteSalidaColacion ? salidaColacionA - salidaColacionB : salidaColacionB - salidaColacionA;
+  });
+
+  calcularTotales();
+};
+
+
 </script>
 
 <style scoped>
 .icon-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    padding: 0;
-    color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  color: #BA0011;
 }
+
 .card {
   border-radius: 0px;
 }
