@@ -39,7 +39,7 @@
 
 <script setup>
 import { useApiStore } from '@/stores/conexiones.js';
-import { onBeforeUnmount, onMounted  } from 'vue'
+import { onBeforeUnmount, onMounted, onUnmounted } from 'vue'
 import Chart from 'chart.js/auto';
 import IndicadoresGlobales from '@/components/IndicadoresGlobales.vue'
 import CoberturaPermanencia from '@/components/CoberturaPermanencia.vue'
@@ -64,6 +64,11 @@ onMounted(() =>{
 onBeforeUnmount(()=>{
   useStore.resetData()
 })
+
+onUnmounted(()=>{
+  useStore.resetData()
+})
+
 
 
 

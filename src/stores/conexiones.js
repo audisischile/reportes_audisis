@@ -31,14 +31,16 @@ export const useApiStore = defineStore("api", () => {
     usuarioSeleccionado.value = 0;
     fechaInicio.value = new Date();
     fechaFin.value = new Date();
+    clientId.value = 0;
+  
   }
 
   const getData = async () => {
     loading.value = true;
     try {
       const response = await axios.post(
-        "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
           fecha_inicio: fechaParaQuery(fechaInicio.value),
@@ -78,8 +80,8 @@ export const useApiStore = defineStore("api", () => {
     updating.value = true;
     try {
       const response = await axios.post(
-        "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
-        // "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
+        // "http://172.23.122.37/audisis/dashboard/adm_dashboard/vista_cobertura",
+        "http://test.iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
         {
           id_cliente: clientId.value,
           fecha_inicio: fechaParaQuery(fechaInicio.value),
