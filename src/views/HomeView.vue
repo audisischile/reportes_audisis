@@ -25,7 +25,8 @@
         <div class="col-4">
           <div class="shadow" style="overflow-y: auto; height: 100%;">
             <div class="">
-              <GraficoUsuarios :datosUsuarios="useStore.apiResponse.porcentaje_locales" class="shadow" />
+              <!-- <GraficoUsuarios :datosUsuarios="useStore.apiResponse.porcentaje_locales" class="shadow" /> -->
+              <GraficoUsuarios v-if="useStore.apiResponse" :datosUsuarios="useStore.apiResponse.porcentaje_locales" class="shadow" />
             </div>
           </div>
         </div>
@@ -38,9 +39,10 @@
 </template>
 
 <script setup>
+import { defineProps, ref } from 'vue';
 import { useApiStore } from '@/stores/conexiones.js';
 import { onBeforeUnmount, onMounted, onUnmounted } from 'vue'
-import Chart from 'chart.js/auto';
+import { Chart, LinearScale,CategoryScale } from 'chart.js';
 import IndicadoresGlobales from '@/components/IndicadoresGlobales.vue'
 import CoberturaPermanencia from '@/components/CoberturaPermanencia.vue'
 import CoberturaTotal from '@/components/CoberturaTotal.vue'
@@ -50,6 +52,8 @@ import JornadaDiaria from '@/components/JornadaDiaria.vue'
 import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
 
 const useStore = useApiStore();
+Chart.register(LinearScale);
+Chart.register(CategoryScale);
 
 const props = defineProps({
   clientId: Number,
@@ -57,20 +61,16 @@ const props = defineProps({
 
 useStore.getData();
 
-onMounted(() =>{
-  useStore.updateClientId(props.clientId)
-})
+// onMounted(() =>{
+//   useStore.updateClientId(props.clientId)
+// })
+onMounted(async () => {
+    await useStore.updateClientId(props.clientId);
+});
 
 onBeforeUnmount(()=>{
   useStore.resetData()
 })
-
-onUnmounted(()=>{
-  useStore.resetData()
-})
-
-
-
 
 </script>
 

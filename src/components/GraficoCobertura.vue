@@ -11,6 +11,7 @@ import axios from 'axios';
 import { Bar } from 'vue-chartjs';
 import { ref, onMounted } from 'vue';
 
+
 export default {
   name: 'ChainCoverageChart',
   components: {

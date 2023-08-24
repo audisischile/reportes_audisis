@@ -26,7 +26,7 @@
         <div class="col-2">
           <button class="btn mt-4 w-100"
             style="border-radius: 0; background-color: #ED3632; border-color: #BA0011; color: white;"
-            @click="useStore.updateData(props.clientId)">Generar</button>
+            @click="useStore.updateData()">Generar</button>
         </div>
       </div>
       <div class="row mt-3">

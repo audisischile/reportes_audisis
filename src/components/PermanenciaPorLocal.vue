@@ -233,7 +233,7 @@ const convertirHoraAMinutos = (horaString) => {
 
 const tiempoString = "10:08";
 const minutos = convertirHoraAMinutos(tiempoString);
-console.log(minutos); // Resultado: 90
+// console.log(minutos);
 
 </script>
 
