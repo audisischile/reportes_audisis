@@ -179,7 +179,7 @@ const reporte = props.apiResponse?.reporte_jornada_diaria;
 const userIds = useStoreApi.apiResponse ? useStoreApi.apiResponse.Detalle_Total.map(item => item.Id_usuario) : [];
 
 const filteredReporteJornadaDiaria = computed(() => {
-  if (!props.apiResponse?.reporte_jornada_diaria) {
+  if (!useStore.apiResponse?.reporte_jornada_diaria) {
     return [];
   }
   return props.apiResponse.reporte_jornada_diaria.filter(item => userIds.includes(item.ID_Usuario));

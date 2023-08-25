@@ -35,7 +35,8 @@
         </div>
       </div>
       <PermanenciaPorLocal :apiResponse="useStore.apiResponse" v-if="useStore.apiResponse"></PermanenciaPorLocal>
-      <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria>
+      <!-- <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria> -->
+      <JornadaDiariaNew />
     </div>
   </div>
 </template>
@@ -53,6 +54,7 @@ import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
 import JornadaDiaria from '@/components/JornadaDiaria.vue'
 import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
 import ModuloFiltrosNew from '../components/ModuloFiltrosNew.vue';
+import JornadaDiariaNew from '../components/JornadaDiariaNew.vue';
 
 const useStore = useApiStore();
 
