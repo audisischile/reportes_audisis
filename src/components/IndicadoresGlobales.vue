@@ -1,10 +1,12 @@
 <template>
-  <div class="row justify-content-center" style="padding-left: 10px; padding-right: 7px;">
-        <div class="indicador-card card col-2 me-2 flex-fill shadow">
+  <div class="row justify-content-between d-flex">
+    <div v-if="apiResponse && apiResponse.usuario_local && apiResponse.usuario_local.length > 0">
+      <div class="row justify-content-center" style="padding-left: 10px; padding-right: 7px;">
+        <div class="indicador-card card flex-fill me-2 shadow">
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
               <span class="indicador-numero" style="color: rgb(240, 240, 240)">
-              {{ apiResponse.usuario_local[0].locales_programadas }}
+                {{ apiResponse.usuario_local[0].locales_programadas }}
               </span>
             </div>
             <div>
@@ -22,8 +24,8 @@
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
               <span class="indicador-numero" style="color: white">
-              {{ apiResponse.usuario_local[0].locales_completados}}
-            </span>
+                {{ apiResponse.usuario_local[0].locales_completados }}
+              </span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -40,8 +42,8 @@
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
               <span class="indicador-numero" style="color: white">
-              {{ apiResponse.usuario_local[0].locales_iniciados}}
-            </span>
+                {{ apiResponse.usuario_local[0].locales_iniciados }}
+              </span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -58,8 +60,8 @@
           <div class="mt-1 d-flex align-items-center justify-content-between">
             <div>
               <span class="indicador-numero" style="color: white">
-              {{ apiResponse.usuario_local[0].locales_pendientes}}
-            </span>
+                {{ apiResponse.usuario_local[0].locales_pendientes }}
+              </span>
             </div>
             <div>
               <i class="bi bi-bar-chart indicador-icono"></i>
@@ -72,11 +74,20 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-const props = defineProps(['apiResponse'])
+import { onMounted } from 'vue';
+import { useApiStore } from '@/stores/conexiones.js';
 
+const props = defineProps(['apiResponse'])
+const useStore = useApiStore();
+
+onMounted(() => {
+  useStore.moduloListo = false
+})
 </script>
 
 <style scoped>
@@ -117,5 +128,4 @@ const props = defineProps(['apiResponse'])
 .card {
   border-radius: 0px;
 }
-
 </style>

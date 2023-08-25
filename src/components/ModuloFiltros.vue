@@ -2,7 +2,7 @@
   <div class="row align-items-start me-1 mb-3 mt-3">
     <div class="col-5">
       <div class="row">
-        <div class="col-11">
+        <div class="col-8">
           <!-- <img :src="useStore.apiResponse.indicadores_globales[0].logo" class="logo"> -->
           <div class="titulo">Reporte de cobertura</div>
           <div class="sub-titulo">Muestra el detalle del cumplimiento de asistencia de los usuarios</div>
@@ -13,33 +13,14 @@
     </div>
     <div class="col-7 p-3" style="background-color: #E8E8E8;">
       <div class="row d-flex justify-content-center align-items-center">
-        <div class="col-5">
-          <label for="datepicker" class="titulo-fecha">Fecha inicio</label>
-          <VueDatePicker v-model="useStore.fechaInicio" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
-            selectText="Seleccionar" :format="diaFormateado" class="w-100" auto-apply></VueDatePicker>
-        </div>
-        <div class="col-5">
-          <label for="datepicker" class="titulo-fecha">Fecha de fin</label>
-          <VueDatePicker v-model="useStore.fechaFin" :enable-time-picker="false" locale="es-ES" cancelText="Cancelar"
-            selectText="Seleccionar" :format="diaFormateado" class="w-100" auto-apply></VueDatePicker>
-        </div>
-        <div class="col-2">
-          <button class="btn mt-4 w-100"
-            style="border-radius: 0; background-color: #ED3632; border-color: #BA0011; color: white;"
-            @click="useStore.updateData()">Generar</button>
-        </div>
+        <DesdeHasta />
       </div>
       <div class="row mt-3">
         <div class="col-4">
-          <!-- <select class="form-select w-100 filtro-select botonera" v-model="useStore.cadenaSeleccionada">
-            <option value="0">Cadenas</option>
-            <option v-for="item in cadenas" :value="item.ID_Cadena">{{ item.NombreCadena }}
-            </option>
-          </select> -->
           <div class="col-4 w-100">
-            <div class="dropdown dropdown-custom text-center">
+            <div class="dropdown dropdown-custom text-center" ref="dropdownCadena">
               <button class="btn w-100 btn-sm dropdown-toggle text-ellipsis" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
+                data-bs-toggle="dropdown" aria-expanded="false" :disabled="useStore.updating">
                 {{ textoFiltroCadena }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
@@ -65,9 +46,9 @@
             <option v-for="item in pdos" :value="item.ID_Local">{{ item.PDO }}</option>
           </select> -->
           <div class="col-4 w-100">
-            <div class="dropdown dropdown-custom text-center">
+            <div class="dropdown dropdown-custom text-center" ref="dropdownPDO">
               <button class="btn w-100 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
+                data-bs-toggle="dropdown" aria-expanded="false" :disabled="useStore.updating">
                 {{ textoFiltroPDO }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
@@ -75,13 +56,13 @@
                   <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar"
                     v-model="PDOSearchQuery">
                 </form>
-                <div class="scrollable-menu" style="max-height: 500px;">
+                <div class="scrollable-menu" style="max-height: 300px;">
                   <a class="dropdown-item" href="#" @click="limpiarLocal">
                     TODOS LOS LOCALES
                   </a>
                   <a class="dropdown-item" href="#" v-for="item in filteredLocales" :value="item.ID_Local"
                     :key="item.ID_Local" @click="setPDO(item.ID_Cadena, item.ID_Local)">
-                    {{ item.PDO }}
+                    {{ reorderText(item.PDO) }}
                   </a>
                 </div>
               </div>
@@ -94,23 +75,23 @@
             <option v-for="item in usuarios" :value="item.Id_usuario">{{ item.Usuario }}</option>
           </select> -->
           <div class="col-4 w-100">
-            <div class="dropdown dropdown-custom text-center">
+            <div class="dropdown dropdown-custom text-center" ref="dropdownUsuario">
               <button class="btn w-100 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                {{ textoFiltroUsuario }}
+                data-bs-toggle="dropdown" aria-expanded="false" :disabled="useStore.updating">
+                {{ corregirCaracter(textoFiltroUsuario) }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
                 <form class="mx-2 my-2">
                   <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar"
                     v-model="usuarioSearchQuery">
                 </form>
-                <div class="scrollable-menu" style="max-height: 500px;">
+                <div class="scrollable-menu" style="max-height: 300px;">
                   <a class="dropdown-item" href="#" @click="limpiarUsuarios">
                     TODOS LOS USUARIOS
                   </a>
                   <a class="dropdown-item" href="#" v-for="item in filteredUsuarios" :value="item.Id_usuario"
                     :key="item.Id_usuario" @click="setUsuario(item.ID_Cadena, item.ID_Local, item.Id_usuario)">
-                    {{ item.Usuario }}
+                    {{ corregirCaracter(item.Usuario) }}
                   </a>
                 </div>
               </div>
@@ -123,8 +104,8 @@
   </div>
   <!-- {{ useStore.cadenaSeleccionada }}
   {{ useStore.localSeleccionado }}
-  {{ useStore.usuarioSeleccionado }}
-  {{ filteredCadenas }}
+  {{ useStore.usuarioSeleccionado }} -->
+  <!-- {{ filteredCadenas }}
   {{ filteredLocales }}
   {{ filteredUsuarios }} -->
 </template>
@@ -132,8 +113,8 @@
 <script setup>
 import { defineProps, computed, ref } from 'vue';
 import { useApiStore } from '@/stores/conexiones.js';
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import DesdeHasta from '@/components/filtros/DesdeHasta.vue';
 
 const props = defineProps({
   apiResponse: {
@@ -143,6 +124,10 @@ const props = defineProps({
   clientId: Number,
 
 })
+
+const dropdownCadena = ref(null);
+const dropdownPDO = ref(null);
+const dropdownUsuario = ref(null);
 
 const useStore = useApiStore();
 
@@ -180,7 +165,7 @@ function diaFormateado(date) {
   return fechaFormateada;
 }
 // Modelo de cadenas
-const cadenas = useStore.apiResponse.modulo_filtros.reduce((result, item) => {
+  const cadenas = (useStore.apiResponse?.modulo_filtros || []).reduce((result, item) => {
   if (!result.some((c) => c.ID_Cadena === item.ID_Cadena)) {
     result.push({ ID_Cadena: item.ID_Cadena, NombreCadena: item.NombreCadena, Id_usuario: item.Id_usuario, ID_Local: item.ID_Local });
   }
@@ -197,6 +182,10 @@ const filteredCadenas = computed(() => {
 const setCadena = (id) => {
   useStore.cadenaSeleccionada = id;
   useStore.localSeleccionado = 0;
+
+  const dropdownElement = dropdownCadena.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
 }
 
 const textoFiltroCadena = computed(() => {
@@ -211,11 +200,14 @@ const limpiarCadena = () => {
   useStore.cadenaSeleccionada = 0;
   useStore.localSeleccionado = 0;
   useStore.usuarioSeleccionado = 0;
+
+  const dropdownElement = dropdownCadena.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
 }
 
 // Puntos de venta
-
-const pdos = useStore.apiResponse.modulo_filtros.reduce((result, item) => {
+const pdos = (useStore.apiResponse?.modulo_filtros || []).reduce((result, item) => {
   if (useStore.cadenaSeleccionada === 0 || item.ID_Cadena === useStore.cadenaSeleccionada) {
     // Si cadenaSeleccionada es igual a 0 o ID_Cadena coincide con cadenaSeleccionada
     // Se añade el elemento al resultado
@@ -237,10 +229,18 @@ const textoFiltroPDO = computed(() => {
 const setPDO = (id_cadena, id_local) => {
   useStore.cadenaSeleccionada = id_cadena;
   useStore.localSeleccionado = id_local;
+
+  const dropdownElement = dropdownPDO.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
 }
 
 const limpiarLocal = () => {
   useStore.localSeleccionado = 0
+
+  const dropdownElement = dropdownPDO.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
 }
 
 const filteredLocales = computed(() => {
@@ -253,7 +253,7 @@ const filteredLocales = computed(() => {
 
 
 // Usuarios
-const usuarios = useStore.apiResponse.modulo_filtros.reduce((result, item) => {
+const usuarios = (useStore.apiResponse?.modulo_filtros || []).reduce((result, item) => {
   if (!result.some((u) => u.Id_usuario === item.Id_usuario)) {
     result.push({ Id_usuario: item.Id_usuario, Usuario: item.Usuario, ID_Cadena: item.ID_Cadena, ID_Local: item.ID_Local });
   }
@@ -285,12 +285,21 @@ const filteredUsuarios = computed(() => {
 
 const setUsuario = (id_cadena, id_local, id_usuario) => {
   useStore.usuarioSeleccionado = id_usuario;
-  useStore.localSeleccionado = id_local;
-  useStore.cadenaSeleccionada = id_cadena;
+  // useStore.localSeleccionado = id_local;
+  // useStore.cadenaSeleccionada = id_cadena;
+
+  const dropdownElement = dropdownUsuario.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
+
 }
 
 const limpiarUsuarios = () => {
   useStore.usuarioSeleccionado = 0;
+
+  const dropdownElement = dropdownUsuario.value;
+  const bootstrapDropdown = new bootstrap.Dropdown(dropdownElement);
+  bootstrapDropdown.hide();
 }
 
 const textoFiltroUsuario = computed(() => {
@@ -298,17 +307,41 @@ const textoFiltroUsuario = computed(() => {
   return UsuarioSeleccionadoObj ? UsuarioSeleccionadoObj.Usuario : 'Usuarios';
 });
 
+const corregirCaracter = (texto) => {
+    return texto.replace(/Ã¡/g, 'á')
+                .replace(/Ã©/g, 'é')
+                .replace(/Ã­/g, 'í')
+                .replace(/Ã³/g, 'ó')
+                .replace(/Ãº/g, 'ú')
+                .replace(/ÃÁ/g, 'Á')
+                .replace(/Ã‰/g, 'É')
+                .replace(/ÃÍ/g, 'Í')
+                .replace(/Ã“/g, 'Ó')
+                .replace(/Ãš/g, 'Ú')
+                .replace(/Ã±/g, 'ñ')
+                .replace(/Ã‘/g, 'Ñ');
+}
 
+function reorderText(text) {
+    const words = text.split(' ');
+    if (words.length > 1) {
+        const lastWord = words.pop();
+        return `${lastWord} ${words.join(' ')}`;
+    }
+    return text;
+}
 
 
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans&display=swap');
-.titulo-fecha{
+
+.titulo-fecha {
   font-size: 14px;
   color: #838383;
 }
+
 .btn {
   max-width: 100%;
   white-space: nowrap;
@@ -358,7 +391,7 @@ const textoFiltroUsuario = computed(() => {
 .dropdown-menu-custom {
   font-size: 13px;
   text-transform: uppercase;
-  
+
 }
 
 .dropdown-toggle {

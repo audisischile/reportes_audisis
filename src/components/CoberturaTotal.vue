@@ -34,14 +34,31 @@
                         <th scope="col" class="sticky-top">Pendientes</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr v-for="item in apiResponse.porcentaje_locales"
+                <!-- <tbody>
+                    <tr v-for="item in useStore.apiResponse.porcentaje_locales"
                         :class="{ 'table-success': item.locales_programadas === item.locales_completados }">
                         <td
                             style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px;">
                             {{ convertirFecha(item.Fecha) }}</td>
-                        <td class="usuario" style="font-size: 11px; font-weight: 500; font-family: 'Roboto', sans-serif;">{{
-                            item.Usuario }}
+                        <td class="usuario" style="font-size: 11px; font-weight: 500; font-family: 'Roboto', sans-serif;">
+                        {{ corregirCaracter(item.Usuario).toUpperCase() }}
+                        </td>
+                        <td>{{ item.locales_programadas }}</td>
+                        <td>{{ item.locales_completados !== 0 ? item.locales_completados : '-' }}</td>
+                        <td>{{ item.locales_iniciados !== 0 ? item.locales_iniciados : '-' }}</td>
+                        <td :class="{ 'table-danger': item.locales_pendientes > 0 }">{{ item.locales_pendientes !== 0 ?
+                            item.locales_pendientes : '-' }}</td>
+                    </tr>
+                </tbody> -->
+                <tbody v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales">
+                    <!-- LÍNEA CON ERROR -->
+                    <tr v-for="item in useStore.apiResponse.porcentaje_locales"
+                        :class="{ 'table-success': item.locales_programadas === item.locales_completados }">
+                        <td
+                            style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px;">
+                            {{ convertirFecha(item.Fecha) }}</td>
+                        <td class="usuario" style="font-size: 11px; font-weight: 500; font-family: 'Roboto', sans-serif;">
+                            {{ corregirCaracter(item.Usuario).toUpperCase() }}
                         </td>
                         <td>{{ item.locales_programadas }}</td>
                         <td>{{ item.locales_completados !== 0 ? item.locales_completados : '-' }}</td>
@@ -50,13 +67,17 @@
                             item.locales_pendientes : '-' }}</td>
                     </tr>
                 </tbody>
+
             </table>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useApiStore } from '@/stores/conexiones.js';
+
+const useStore = useApiStore();
 
 const props = defineProps({
     apiResponse: {
@@ -74,39 +95,59 @@ const convertirFecha = (fecha) => {
 }
 
 const ordenarData = () => {
-    // Si ordenAscendente es true, ordenar de forma ascendente
-    // Si ordenAscendente es false, ordenar de forma descendente
-    props.apiResponse.porcentaje_locales.sort((a, b) => {
-        const fechaA = new Date(a.Fecha);
-        const fechaB = new Date(b.Fecha);
-
-        return ordenAscendente ? fechaA - fechaB : fechaB - fechaA;
-    });
+    // Verificar que useStore.apiResponse y useStore.apiResponse.porcentaje_locales existen antes de intentar ordenar
+    if (useStore.apiResponse && useStore.apiResponse.porcentaje_locales) {
+        useStore.apiResponse.porcentaje_locales.sort((a, b) => {
+            const fechaA = new Date(a.Fecha);
+            const fechaB = new Date(b.Fecha);
+            return ordenAscendente.value ? fechaA - fechaB : fechaB - fechaA;  // Nota: usar ordenAscendente.value para acceder al valor de la referencia reactiva
+        });
+    }
 };
 
-ordenarData();
+
+onMounted(() => {
+    ordenarData();
+});
 
 const toggleOrden = () => {
     ordenAscendente = !ordenAscendente;
     ordenarData();
 };
 
+const corregirCaracter = (texto) => {
+    return texto.replace(/Ã¡/g, 'á')
+        .replace(/Ã©/g, 'é')
+        .replace(/Ã­/g, 'í')
+        .replace(/Ã³/g, 'ó')
+        .replace(/Ãº/g, 'ú')
+        .replace(/ÃÁ/g, 'Á')
+        .replace(/Ã‰/g, 'É')
+        .replace(/ÃÍ/g, 'Í')
+        .replace(/Ã“/g, 'Ó')
+        .replace(/Ãš/g, 'Ú')
+        .replace(/Ã±/g, 'ñ')
+        .replace(/Ã‘/g, 'Ñ');
+}
+
 </script>
 
 <style scoped>
 @keyframes slide-in {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0);
-  }
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
 }
 
 .slide-in-div {
-  animation-name: slide-in;
-  animation-duration: 1s;
+    animation-name: slide-in;
+    animation-duration: 1s;
 }
+
 .icon-button {
     background: transparent;
     border: none;
@@ -117,7 +158,7 @@ const toggleOrden = () => {
 }
 
 input::placeholder {
-  color: rgb(232, 230, 230);
+    color: rgb(232, 230, 230);
 }
 
 .searchInput {
@@ -126,6 +167,7 @@ input::placeholder {
     color: white;
     border-color: white;
 }
+
 .tabla-por-usuario {
     max-height: 390px;
     overflow-y: auto
@@ -141,6 +183,4 @@ input::placeholder {
 .card {
     border-radius: 0px;
 }
-
-
 </style>

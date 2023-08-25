@@ -36,11 +36,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="item in apiResponse.Detalle_Total">
+                    <tr v-for="item in (apiResponse && apiResponse.Detalle_Total ? apiResponse.Detalle_Total : [])">
                         <td style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{
                             convertirFecha(item.fecha) }}</td>
                         <td>{{ item.PDO.toUpperCase() }}</td>
-                        <td>{{ item.Usuario.toUpperCase() }}</td>
+                        <td>{{ corregirCaracter(item.Usuario.toUpperCase()) }}</td>
                         <td style="font-size: 13px; font-family: Roboto, sans-serif;">{{ item.MarcaEntrada }}</td>
                         <td style="font-size: 13px; font-family: Roboto, sans-serif;">{{ item.MarcaSalida }}</td>
                         <td style="font-size: 13px;"> {{
@@ -95,24 +95,18 @@ const ordenarData = () => {
 
 const ordenarMarcaSalida = () => {
     props.apiResponse.Detalle_Total.sort((a, b) => {
-        const marcaSalidaA = convertirHoraAMinutos(a.MarcaSalida);
-        const marcaSalidaB = convertirHoraAMinutos(b.MarcaSalida);
+        let marcaSalidaA = convertirHoraAMinutos(a.MarcaSalida);
+        let marcaSalidaB = convertirHoraAMinutos(b.MarcaSalida);
 
-        if (marcaSalidaA === "-" || marcaSalidaA === "") {
-            marcaSalidaA = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+        if (marcaSalidaA === "sin hora") {
+            return 1;  // Movemos a las entradas sin hora al final de la lista
         }
-        if (marcaSalidaB === "-" || marcaSalidaB === "") {
-            marcaSalidaB = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+        if (marcaSalidaB === "sin hora") {
+            return -1;  // Movemos a las entradas sin hora al final de la lista
         }
 
-        // Comparar valores numéricos primero, luego los "-"
-        if (!isNaN(marcaSalidaA) && !isNaN(marcaSalidaB)) {
-            return ordenAscendenteMarcasalida.value ? marcaSalidaA - marcaSalidaB : marcaSalidaB - marcaSalidaA;
-        } else if (isNaN(marcaSalidaA)) {
-            return 1;
-        } else {
-            return -1;
-        }
+        // Comparar valores numéricos primero, luego los "sin hora"
+        return ordenAscendenteMarcasalida.value ? marcaSalidaA - marcaSalidaB : marcaSalidaB - marcaSalidaA;
     });
 
     ordenAscendenteMarcasalida.value = !ordenAscendenteMarcasalida.value;
@@ -120,28 +114,63 @@ const ordenarMarcaSalida = () => {
 
 const ordenarPermanenciaEstablecida = () => {
     props.apiResponse.Detalle_Total.sort((a, b) => {
-        const permanenciaA = convertirHoraAMinutos(a.TiempoPermanenciaEstablecida);
-        const permanenciaB = convertirHoraAMinutos(b.TiempoPermanenciaEstablecida);
-
-        if (permanenciaA === "-" || permanenciaA === "") {
-            permanenciaA = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
-        }
-        if (permanenciaB === "-" || permanenciaB === "") {
-            permanenciaB = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
-        }
-
-        if (!isNaN(permanenciaA) && !isNaN(permanenciaB)) {
-            return ordenAscendentePermanencia.value ? permanenciaA - permanenciaB : permanenciaB - permanenciaA;
-        } else if (isNaN(permanenciaA)) {
-            return 1;
-        } else {
-            return -1;
-        }
+        // Ordenar directamente usando TiempoPermanenciaEstablecida
+        return ordenAscendentePermanencia.value ? a.TiempoPermanenciaEstablecida - b.TiempoPermanenciaEstablecida : b.TiempoPermanenciaEstablecida - a.TiempoPermanenciaEstablecida;
     });
-
     ordenAscendentePermanencia.value = !ordenAscendentePermanencia.value;
-
 };
+
+
+
+// const ordenarMarcaSalida = () => {
+//     props.apiResponse.Detalle_Total.sort((a, b) => {
+//         const marcaSalidaA = convertirHoraAMinutos(a.MarcaSalida);
+//         const marcaSalidaB = convertirHoraAMinutos(b.MarcaSalida);
+
+//         if (marcaSalidaA === "-" || marcaSalidaA === "") {
+//             marcaSalidaA = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+//         }
+//         if (marcaSalidaB === "-" || marcaSalidaB === "") {
+//             marcaSalidaB = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+//         }
+
+//         // Comparar valores numéricos primero, luego los "-"
+//         if (!isNaN(marcaSalidaA) && !isNaN(marcaSalidaB)) {
+//             return ordenAscendenteMarcasalida.value ? marcaSalidaA - marcaSalidaB : marcaSalidaB - marcaSalidaA;
+//         } else if (isNaN(marcaSalidaA)) {
+//             return 1;
+//         } else {
+//             return -1;
+//         }
+//     });
+
+//     ordenAscendenteMarcasalida.value = !ordenAscendenteMarcasalida.value;
+// };
+
+// const ordenarPermanenciaEstablecida = () => {
+//     props.apiResponse.Detalle_Total.sort((a, b) => {
+//         const permanenciaA = convertirHoraAMinutos(a.TiempoPermanenciaEstablecida);
+//         const permanenciaB = convertirHoraAMinutos(b.TiempoPermanenciaEstablecida);
+
+//         if (permanenciaA === "-" || permanenciaA === "") {
+//             permanenciaA = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+//         }
+//         if (permanenciaB === "-" || permanenciaB === "") {
+//             permanenciaB = Number.MIN_SAFE_INTEGER; // Considerar como mínimo
+//         }
+
+//         if (!isNaN(permanenciaA) && !isNaN(permanenciaB)) {
+//             return ordenAscendentePermanencia.value ? permanenciaA - permanenciaB : permanenciaB - permanenciaA;
+//         } else if (isNaN(permanenciaA)) {
+//             return 1;
+//         } else {
+//             return -1;
+//         }
+//     });
+
+//     ordenAscendentePermanencia.value = !ordenAscendentePermanencia.value;
+
+// };
 
 // const ordenarPermanenciaEstablecida = () => {
 //     props.apiResponse.Detalle_Total.sort((a, b) => {
@@ -234,6 +263,21 @@ const convertirHoraAMinutos = (horaString) => {
 const tiempoString = "10:08";
 const minutos = convertirHoraAMinutos(tiempoString);
 // console.log(minutos);
+
+const corregirCaracter = (texto) => {
+    return texto.replace(/Ã¡/g, 'á')
+                .replace(/Ã©/g, 'é')
+                .replace(/Ã­/g, 'í')
+                .replace(/Ã³/g, 'ó')
+                .replace(/Ãº/g, 'ú')
+                .replace(/ÃÁ/g, 'Á')
+                .replace(/Ã‰/g, 'É')
+                .replace(/ÃÍ/g, 'Í')
+                .replace(/Ã“/g, 'Ó')
+                .replace(/Ãš/g, 'Ú')
+                .replace(/Ã±/g, 'ñ')
+                .replace(/Ã‘/g, 'Ñ');
+}
 
 </script>
 

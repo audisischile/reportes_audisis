@@ -10,6 +10,11 @@
 import axios from 'axios';
 import { Bar } from 'vue-chartjs';
 import { ref, onMounted } from 'vue';
+import { Chart, LinearScale,CategoryScale, BarElement } from 'chart.js';
+
+Chart.register(LinearScale);
+Chart.register(CategoryScale);
+Chart.register(BarElement);
 
 
 export default {

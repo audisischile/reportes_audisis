@@ -1,5 +1,6 @@
 <template>
-  <div class="card tabla-por-usuario shadow mb-4">
+  <div v-if="useStoreApi.apiResponse">
+    <div class="card tabla-por-usuario shadow mb-4">
     <div style="background-color: #BA0011;" class="row">
       <div class="col-11">
         <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
@@ -57,11 +58,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in props.apiResponse.reporte_jornada_diaria">
+          <!-- <tr v-for="item in props.apiResponse.reporte_jornada_diaria"> -->
+            <tr v-for="item in filteredReporteJornadaDiaria">
             <td>{{ item.Fecha }}</td>
             <td>
               <div>{{ item.Rut }}</div>
-              <div>{{ item.NombreTrabajador }}</div>
+              <div>{{ corregirCaracter(item.NombreTrabajador).toUpperCase() }}</div>
             </td>
             <td>{{ item.TurnoEntrada }}</td>
             <td>{{ item.TurnoSalida }}</td>
@@ -153,13 +155,16 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { usePermisosStore } from '@/stores/permisos.js'
+import { useApiStore } from '@/stores/conexiones.js';
 
-const useStore = usePermisosStore()
+const useStore = usePermisosStore();
+const useStoreApi = useApiStore();
 
 const props = defineProps({
   apiResponse: {
@@ -167,6 +172,18 @@ const props = defineProps({
     required: true
   }
 })
+
+const apiResponse = props.apiResponse || {};
+const reporte = props.apiResponse?.reporte_jornada_diaria;
+
+const userIds = useStoreApi.apiResponse ? useStoreApi.apiResponse.Detalle_Total.map(item => item.Id_usuario) : [];
+
+const filteredReporteJornadaDiaria = computed(() => {
+  if (!props.apiResponse?.reporte_jornada_diaria) {
+    return [];
+  }
+  return props.apiResponse.reporte_jornada_diaria.filter(item => userIds.includes(item.ID_Usuario));
+});
 
 const ordenAscendente = ref(true);
 let ordenTiempoAtrasoAscendente = true;
@@ -216,24 +233,40 @@ const stringToSeconds = (str) => {
 };
 
 let horasTrabajadas = 0;
-props.apiResponse.reporte_jornada_diaria.forEach(item => {
-  horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
-});
+
+if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
+    props.apiResponse.reporte_jornada_diaria.forEach(item => {
+        horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
+    });
+}
 
 let horasNoTrabajadas = 0;
-props.apiResponse.reporte_jornada_diaria.forEach(item => {
+
+const reporteJornadaDiaria = computed(() => {
+  if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
+    return props.apiResponse.reporte_jornada_diaria;
+  }
+  return [];
+});
+
+reporteJornadaDiaria.value.forEach(item => {
   horasNoTrabajadas += stringToSeconds(item.HorasNoTrabajadas);
 });
 
 let horasDeAtraso = 0;
-props.apiResponse.reporte_jornada_diaria.forEach(item => {
-  horasDeAtraso += stringToSeconds(item.HorasAtraso);
-});
+if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
+    props.apiResponse.reporte_jornada_diaria.forEach(item => {
+      horasDeAtraso += stringToSeconds(item.HorasAtraso);
+    });
+}
 
 let horasExtra = 0;
-props.apiResponse.reporte_jornada_diaria.forEach(item => {
-  horasExtra += stringToSeconds(item.HorasExtras);
-});
+
+if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
+    props.apiResponse.reporte_jornada_diaria.forEach(item => {
+      horasExtra += stringToSeconds(item.HorasExtras);
+    });
+}
 
 const secondsToHHMMSS = (seconds) => {
   const hours = Math.floor(seconds / 3600);
@@ -336,6 +369,21 @@ const ordenarSalidaColacion = () => {
 
   calcularTotales();
 };
+
+const corregirCaracter = (texto) => {
+    return texto.replace(/Ã¡/g, 'á')
+                .replace(/Ã©/g, 'é')
+                .replace(/Ã­/g, 'í')
+                .replace(/Ã³/g, 'ó')
+                .replace(/Ãº/g, 'ú')
+                .replace(/ÃÁ/g, 'Á')
+                .replace(/Ã‰/g, 'É')
+                .replace(/ÃÍ/g, 'Í')
+                .replace(/Ã“/g, 'Ó')
+                .replace(/Ãš/g, 'Ú')
+                .replace(/Ã±/g, 'ñ')
+                .replace(/Ã‘/g, 'Ñ');
+}
 
 
 </script>
