@@ -7,7 +7,8 @@
     </div>
   </div>
   <div class="container" v-else="!useStore.loading">
-    <ModuloFiltrosVue :apiResponse="useStore.loading"></ModuloFiltrosVue>
+    <!-- <ModuloFiltrosVue ></ModuloFiltrosVue> -->
+    <ModuloFiltrosNew />
     <div v-if="useStore.updating">
       <div class="d-flex align-items-center justify-content-center mt-5 updating-container">
         <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
@@ -51,6 +52,7 @@ import GraficoUsuarios from '@/components/GraficoUsuarios.vue'
 import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
 import JornadaDiaria from '@/components/JornadaDiaria.vue'
 import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
+import ModuloFiltrosNew from '../components/ModuloFiltrosNew.vue';
 
 const useStore = useApiStore();
 

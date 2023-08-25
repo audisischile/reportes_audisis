@@ -102,27 +102,23 @@
       </div>
     </div>
   </div>
-  <!-- {{ useStore.cadenaSeleccionada }}
+  {{ useStore.cadenaSeleccionada }}
   {{ useStore.localSeleccionado }}
-  {{ useStore.usuarioSeleccionado }} -->
-  <!-- {{ filteredCadenas }}
+  {{ useStore.usuarioSeleccionado }}
+  <hr>
+  {{ filteredCadenas }}
   {{ filteredLocales }}
-  {{ filteredUsuarios }} -->
+  {{ filteredUsuarios }}
 </template>
 
 <script setup>
-import { defineProps, computed, ref } from 'vue';
+import { defineProps, computed, ref, onUnmounted } from 'vue';
 import { useApiStore } from '@/stores/conexiones.js';
 import '@vuepic/vue-datepicker/dist/main.css';
 import DesdeHasta from '@/components/filtros/DesdeHasta.vue';
 
 const props = defineProps({
-  apiResponse: {
-    type: Object,
-    required: true
-  },
-  clientId: Number,
-
+  clientId: Number
 })
 
 const dropdownCadena = ref(null);
@@ -175,7 +171,7 @@ function diaFormateado(date) {
 const cadenaSearchQuery = ref('');
 
 const filteredCadenas = computed(() => {
-  return cadenas
+  return cadenas.filter(cadena => cadena.NombreCadena.toLowerCase().includes(cadenaSearchQuery.value.toLowerCase()));
 });
 
 
@@ -331,6 +327,13 @@ function reorderText(text) {
     return text;
 }
 
+onUnmounted(() => {
+  //limpiar variables
+  useStore.cadenaSeleccionada = 0;
+  useStore.localSeleccionado = 0;
+  useStore.usuarioSeleccionado = 0;
+  
+})
 
 </script>
 
