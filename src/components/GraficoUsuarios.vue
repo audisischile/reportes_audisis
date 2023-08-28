@@ -53,38 +53,6 @@ function toggleOrden() {
   ordenarUsuariosCobertura();
 }
 
-// const crearUsuariosCobertura = () => {
-//   const usuarios = {};
-
-//   useStore.apiResponse.porcentaje_locales.forEach((usuario) => {
-//     // Verificar si el usuario ya existe en el objeto "usuarios"
-//     if (usuarios.hasOwnProperty(usuario.Usuario)) {
-//       // Si existe, actualizar el promedio
-//       usuarios[usuario.Usuario].locales_completados += usuario.locales_completados;
-//       usuarios[usuario.Usuario].locales_programadas += usuario.locales_programadas;
-//       usuarios[usuario.Usuario].diasContados += 1;
-//     } else {
-//       // Si no existe, agregarlo al objeto "usuarios" con los datos del primer día
-//       usuarios[usuario.Usuario] = {
-//         nombre: usuario.Usuario,
-//         locales_completados: usuario.locales_completados,
-//         locales_programadas: usuario.locales_programadas,
-//         diasContados: 1,
-//       };
-//     }
-//   });
-
-//   // Calcular el promedio para cada usuario
-//   for (const key in usuarios) {
-//     if (usuarios.hasOwnProperty(key)) {
-//       const usuario = usuarios[key];
-//       usuario.coberturaPromedio = (usuario.locales_completados / usuario.locales_programadas) * 100;
-//     }
-//   }
-
-//   // Convertir el objeto "usuarios" en un arreglo para mostrarlo en la tabla
-//   usuariosCobertura.value = Object.values(usuarios);
-// };
 
 const crearUsuariosCobertura = () => {
   const usuarios = {};

@@ -11,7 +11,6 @@
                             <div class="col-6 indicador-numero" style="display: flex; align-items: baseline;">
                                 {{ useStore.apiResponse.indicadores_globales[0].Porcentaje_Cobertura_Mensual
                                 }}<span>%</span>
-                                <span>%</span>
                             </div>
                             <div class="col-6 kpi-cobertura-num-chico align-self-center" style="visibility: hidden;">
                                 <i class="bi bi-arrow-up-circle flecha-arriba"></i>
