@@ -78,7 +78,7 @@
             <div class="dropdown dropdown-custom text-center" ref="dropdownUsuario">
               <button class="btn w-100 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1"
                 data-bs-toggle="dropdown" aria-expanded="false" :disabled="useStore.updating">
-                {{ corregirCaracter(textoFiltroUsuario) }}
+                {{ textoFiltroUsuario }}
               </button>
               <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
                 <form class="mx-2 my-2">
@@ -109,6 +109,7 @@
   {{ filteredCadenas }}
   {{ filteredLocales }}
   {{ filteredUsuarios }}
+  {{ usuarios }}
 </template>
 
 <script setup>
@@ -299,9 +300,9 @@ const limpiarUsuarios = () => {
 }
 
 const textoFiltroUsuario = computed(() => {
-  const UsuarioSeleccionadoObj = usuarios.find((item) => item.Id_usuario === useStore.usuarioSeleccionado);
-  return UsuarioSeleccionadoObj ? UsuarioSeleccionadoObj.Usuario : 'Usuarios';
-});
+  const usuarioSeleccionadoObj = usuarios.find((item) => item.Id_usuario === useStore.usuarioSeleccionado);
+  return usuarioSeleccionadoObj ? usuarioSeleccionadoObj.Usuario : 'Usuarios';
+})
 
 const corregirCaracter = (texto) => {
     return texto.replace(/Ã¡/g, 'á')

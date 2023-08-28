@@ -1,6 +1,6 @@
 <template>
-    <div v-if="useStoreApi.apiResponse">
-      <div class="card tabla-por-usuario shadow mb-4">
+  <div v-if="useStoreApi?.apiResponse">
+    <div class="card tabla-por-usuario shadow mb-4">
       <div style="background-color: #BA0011;" class="row">
         <div class="col-11">
           <h6 class="card-subtitle text-body-secondary titulo-por-usuario sticky-top mb-2">
@@ -8,9 +8,6 @@
           </h6>
         </div>
         <div class="col-1">
-          <!-- <button @click="toggleOrden" class="icon-button mt-2" style="color: wh¡ite;">
-            <i :class="ordenAscendente ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
-          </button> -->
         </div>
       </div>
       <div class="table-responsive">
@@ -58,8 +55,8 @@
             </tr>
           </thead>
           <tbody>
-            <!-- <tr v-for="item in props.apiResponse.reporte_jornada_diaria"> -->
-              <tr v-for="item in filteredReporteJornadaDiaria">
+            
+            <tr v-for="item in filteredReporteJornadaDiaria">
               <td>{{ item.Fecha }}</td>
               <td>
                 <div>{{ item.Rut }}</div>
@@ -91,12 +88,12 @@
               <td></td>
               <td></td>
               <td></td>
-              <td class="totales">{{ secondsToHHMMSS(horasTrabajadas) }}</td>
+              <td class="totales">{{ horasTrabajadas }}</td>
               <td></td>
-              <td class="totales">{{ secondsToHHMMSS(horasNoTrabajadas) }}</td>
-              <td class="totales">{{ secondsToHHMMSS(horasDeAtraso) }}</td>
+              <td class="totales">{{ horasNoTrabajadas }}</td>
+              <td class="totales">{{ horasDeAtraso }}</td>
               <td></td>
-              <td class="totales">{{ secondsToHHMMSS(horasExtra) }}</td>
+              <td class="totales">{{ horasExtra }}</td>
               <td></td>
               <td></td>
               <td></td>
@@ -128,7 +125,7 @@
                 mostrarLeyendas ? "Ver menos" : "Ver más" }}</button>
           </div>
         </div>
-  
+
         <div class="row mt-4" v-show="mostrarLeyendas">
           <div class="col-2"><strong>ST:</strong> Sin turno</div>
           <div class="col-2"><strong>PR:</strong> Permiso por reunión</div>
@@ -155,282 +152,80 @@
         </div>
       </div>
     </div>
-    </div>
-    <!-- {{ useStoreApi.apiResponse.reporte_jornada_diaria }} -->
-  </template>
+  </div>
+  {{ useStoreApi.apiResponse?.reporte_jornada_diaria }}
+</template>
   
-  <script setup>
-  import { ref, computed } from 'vue';
-  import { usePermisosStore } from '@/stores/permisos.js'
-  import { useApiStore } from '@/stores/conexiones.js';
+<script setup>
+import { ref, computed } from 'vue';
+import { usePermisosStore } from '@/stores/permisos.js'
+import { useApiStore } from '@/stores/conexiones.js';
+
+const useStore = usePermisosStore();
+const useStoreApi = useApiStore();
+
+const filteredReporteJornadaDiaria = () => {
+  return useApiStore?.apiResponse.reporte_jornada_diaria
+}
+
+
+const corregirCaracter = (texto) => {
+  return texto.replace(/Ã¡/g, 'á')
+    .replace(/Ã©/g, 'é')
+    .replace(/Ã­/g, 'í')
+    .replace(/Ã³/g, 'ó')
+    .replace(/Ãº/g, 'ú')
+    .replace(/ÃÁ/g, 'Á')
+    .replace(/Ã‰/g, 'É')
+    .replace(/ÃÍ/g, 'Í')
+    .replace(/Ã“/g, 'Ó')
+    .replace(/Ãš/g, 'Ú')
+    .replace(/Ã±/g, 'ñ')
+    .replace(/Ã‘/g, 'Ñ');
+}
+</script>
   
-  const useStore = usePermisosStore();
-  const useStoreApi = useApiStore();
-  
-  const props = defineProps({
-    apiResponse: {
-      type: Object,
-      required: true
-    }
-  })
-  
-  
-  const apiResponse = props.apiResponse || {};
-  const reporte = props.apiResponse?.reporte_jornada_diaria;
-  
-  const userIds = useStoreApi.apiResponse ? useStoreApi.apiResponse.Detalle_Total.map(item => item.Id_usuario) : [];
-  
-  const filteredReporteJornadaDiaria = computed(() => {
-    if (!useStore.apiResponse?.reporte_jornada_diaria) {
-      return [];
-    }
-    return props.apiResponse.reporte_jornada_diaria.filter(item => userIds.includes(item.ID_Usuario));
-  });
-  
-  const ordenAscendente = ref(true);
-  let ordenTiempoAtrasoAscendente = true;
-  let ordenAdelantoSalidaAscendente = true;
-  let ordenAscendenteHES = true;
-  let ordenAscendenteEntradaColacion = true;
-  let ordenAscendenteSalidaColacion = true
-  
-  const toggleOrden = () => {
-    ordenAscendente.value = !ordenAscendente.value;
-    ordenarData();
-  };
-  
-  const mostrarLeyendas = ref(false);
-  const toggleLeyendas = () => {
-    mostrarLeyendas.value = !mostrarLeyendas.value;
-  }
-  
-  const formatHoras = (horas) => {
-    if (horas !== null) {
-      const tiempo = new Date(0);
-      tiempo.setSeconds(horas);
-      const horasStr = tiempo.getUTCHours().toString().padStart(2, '0');
-      const minutosStr = tiempo.getUTCMinutes().toString().padStart(2, '0');
-      const segundosStr = tiempo.getUTCSeconds().toString().padStart(2, '0');
-      return `${horasStr}:${minutosStr}:${segundosStr}`;
-    }
-    return '00:00:00';
-  };
-  
-  const stringToNumber = (str) => {
-    return Number(str);
-  }
-  
-  const getResumenPermiso = (idPermiso) => {
-    idPermiso = stringToNumber(idPermiso);
-    const permiso = useStore.permisosData.find((permiso) => permiso.ID_Permiso === idPermiso);
-    return permiso ? permiso.Resumen : '';
-  };
-  
-  const stringToSeconds = (str) => {
-    if (str === null) {
-      return 0;
-    }
-    const [horas, minutos, segundos] = str.split(':');
-    return Number(horas) * 3600 + Number(minutos) * 60 + Number(segundos);
-  };
-  
-  let horasTrabajadas = 0;
-  
-  if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
-      props.apiResponse.reporte_jornada_diaria.forEach(item => {
-          horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
-      });
-  }
-  
-  let horasNoTrabajadas = 0;
-  
-  const reporteJornadaDiaria = computed(() => {
-    if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
-      return props.apiResponse.reporte_jornada_diaria;
-    }
-    return [];
-  });
-  
-  reporteJornadaDiaria.value.forEach(item => {
-    horasNoTrabajadas += stringToSeconds(item.HorasNoTrabajadas);
-  });
-  
-  let horasDeAtraso = 0;
-  if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
-      props.apiResponse.reporte_jornada_diaria.forEach(item => {
-        horasDeAtraso += stringToSeconds(item.HorasAtraso);
-      });
-  }
-  
-  let horasExtra = 0;
-  
-  if (props.apiResponse && props.apiResponse.reporte_jornada_diaria) {
-      props.apiResponse.reporte_jornada_diaria.forEach(item => {
-        horasExtra += stringToSeconds(item.HorasExtras);
-      });
-  }
-  
-  const secondsToHHMMSS = (seconds) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const remainingSeconds = seconds % 60;
-  
-    const hoursStr = hours.toString().padStart(2, '0');
-    const minutesStr = minutes.toString().padStart(2, '0');
-    const secondsStr = remainingSeconds.toString().padStart(2, '0');
-  
-    return `${hoursStr}:${minutesStr}:${secondsStr}`;
-  };
-  
-  const ordenarData = () => {
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const fechaA = new Date(a.Fecha);
-      const fechaB = new Date(b.Fecha);
-      return ordenAscendente.value ? fechaA - fechaB : fechaB - fechaA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const calcularTotales = () => {
-    horasTrabajadas = 0;
-    horasNoTrabajadas = 0;
-    horasDeAtraso = 0;
-    horasExtra = 0;
-    props.apiResponse.reporte_jornada_diaria.forEach(item => {
-      horasTrabajadas += stringToSeconds(item.HorasTrabajadas);
-      horasNoTrabajadas += stringToSeconds(item.HorasNoTrabajadas);
-      horasDeAtraso += stringToSeconds(item.HorasAtraso);
-      horasExtra += stringToSeconds(item.HorasExtras);
-    });
-  };
-  
-  // ordenarData();
-  
-  const ordenarTiempoAtraso = () => {
-    ordenTiempoAtrasoAscendente = !ordenTiempoAtrasoAscendente;
-  
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const tiempoAtrasoA = stringToSeconds(a.HorasAtraso);
-      const tiempoAtrasoB = stringToSeconds(b.HorasAtraso);
-  
-      return ordenTiempoAtrasoAscendente ? tiempoAtrasoA - tiempoAtrasoB : tiempoAtrasoB - tiempoAtrasoA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const ordenarAdelantoSalida = () => {
-    ordenAdelantoSalidaAscendente = !ordenAdelantoSalidaAscendente;
-  
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const adelantoSalidaA = stringToSeconds(a.HorasAdelanto);
-      const adelantoSalidaB = stringToSeconds(b.HorasAdelanto);
-  
-      return ordenAdelantoSalidaAscendente ? adelantoSalidaA - adelantoSalidaB : adelantoSalidaB - adelantoSalidaA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const ordenarHES = () => {
-    ordenAscendenteHES = !ordenAscendenteHES;
-  
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const horasExtrasSalidaA = stringToSeconds(a.HorasExtras);
-      const horasExtrasSalidaB = stringToSeconds(b.HorasExtras);
-  
-      return ordenAscendenteHES ? horasExtrasSalidaA - horasExtrasSalidaB : horasExtrasSalidaB - horasExtrasSalidaA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const ordenarEntradaColacion = () => {
-    ordenAscendenteEntradaColacion = !ordenAscendenteEntradaColacion;
-  
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const entradaColacionA = a.EntradaColacion === "-:-:-" ? -1 : stringToSeconds(a.EntradaColacion);
-      const entradaColacionB = b.EntradaColacion === "-:-:-" ? -1 : stringToSeconds(b.EntradaColacion);
-  
-      return ordenAscendenteEntradaColacion ? entradaColacionA - entradaColacionB : entradaColacionB - entradaColacionA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const ordenarSalidaColacion = () => {
-    ordenAscendenteSalidaColacion = !ordenAscendenteSalidaColacion;
-  
-    props.apiResponse.reporte_jornada_diaria.sort((a, b) => {
-      const salidaColacionA = a.SalidaColacion === "-:-:-" ? -1 : stringToSeconds(a.SalidaColacion);
-      const salidaColacionB = b.SalidaColacion === "-:-:-" ? -1 : stringToSeconds(b.SalidaColacion);
-  
-      return ordenAscendenteSalidaColacion ? salidaColacionA - salidaColacionB : salidaColacionB - salidaColacionA;
-    });
-  
-    calcularTotales();
-  };
-  
-  const corregirCaracter = (texto) => {
-      return texto.replace(/Ã¡/g, 'á')
-                  .replace(/Ã©/g, 'é')
-                  .replace(/Ã­/g, 'í')
-                  .replace(/Ã³/g, 'ó')
-                  .replace(/Ãº/g, 'ú')
-                  .replace(/ÃÁ/g, 'Á')
-                  .replace(/Ã‰/g, 'É')
-                  .replace(/ÃÍ/g, 'Í')
-                  .replace(/Ã“/g, 'Ó')
-                  .replace(/Ãš/g, 'Ú')
-                  .replace(/Ã±/g, 'ñ')
-                  .replace(/Ã‘/g, 'Ñ');
-  }
-  
-  
-  </script>
-  
-  <style scoped>
-  .icon-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    outline: none;
-    padding: 0;
-    color: #BA0011;
-  }
-  
-  .card {
-    border-radius: 0px;
-  }
-  
-  .tabla-por-usuario {
-    max-height: 500px;
-    overflow-y: auto
-  }
-  
-  .titulo-por-usuario {
-    font-size: 16px;
-    font-weight: 600;
-    margin-top: 13px;
-    margin-left: 10px;
-  }
-  
-  .table thead th.sticky-top {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-  }
-  
-  .table tfoot td {
-    position: sticky;
-    bottom: 0;
-    background-color: #f8f9fa;
-  }
-  
-  .totales {
-    font-weight: 400;
-    font-size: 12px;
-    color: #BA0011;
-  }
-  </style>
+<style scoped>
+.icon-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  color: #BA0011;
+}
+
+.card {
+  border-radius: 0px;
+}
+
+.tabla-por-usuario {
+  max-height: 500px;
+  overflow-y: auto
+}
+
+.titulo-por-usuario {
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 13px;
+  margin-left: 10px;
+}
+
+.table thead th.sticky-top {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+}
+
+.table tfoot td {
+  position: sticky;
+  bottom: 0;
+  background-color: #f8f9fa;
+}
+
+.totales {
+  font-weight: 400;
+  font-size: 12px;
+  color: #BA0011;
+}
+</style>

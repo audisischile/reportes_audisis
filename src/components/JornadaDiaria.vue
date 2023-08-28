@@ -1,4 +1,7 @@
 <template>
+  <!-- {{ userIds }} 
+  <hr>
+  {{filteredReporteJornadaDiaria}} -->
   <div v-if="useStoreApi.apiResponse">
     <div class="card tabla-por-usuario shadow mb-4">
     <div style="background-color: #BA0011;" class="row">
@@ -58,8 +61,8 @@
           </tr>
         </thead>
         <tbody>
-          <!-- <tr v-for="item in props.apiResponse.reporte_jornada_diaria"> -->
-            <tr v-for="item in filteredReporteJornadaDiaria">
+          <tr v-for="item in filteredReporteJornadaDiaria" v-if="useStoreApi.apiResponse.reporte_jornada_diaria">
+            <!-- <tr v-for="item in filteredReporteJornadaDiaria"> -->
             <td>{{ item.Fecha }}</td>
             <td>
               <div>{{ item.Rut }}</div>
@@ -156,6 +159,12 @@
     </div>
   </div>
   </div>
+  <div v-if="useStoreApi.apiResponse">
+    <!-- {{ filteredReporteJornadaDiaria }} -->
+    <hr>
+    <!-- {{ useStoreApi.apiResponse.reporte_jornada_diaria }} -->
+    
+  </div>
 </template>
 
 <script setup>
@@ -179,10 +188,10 @@ const reporte = props.apiResponse?.reporte_jornada_diaria;
 const userIds = useStoreApi.apiResponse ? useStoreApi.apiResponse.Detalle_Total.map(item => item.Id_usuario) : [];
 
 const filteredReporteJornadaDiaria = computed(() => {
-  if (!useStore.apiResponse?.reporte_jornada_diaria) {
+  if (!useStoreApi.apiResponse.reporte_jornada_diaria) {
     return [];
   }
-  return props.apiResponse.reporte_jornada_diaria.filter(item => userIds.includes(item.ID_Usuario));
+  return useStoreApi?.apiResponse?.reporte_jornada_diaria.filter(item => userIds.includes(item.ID_Usuario));
 });
 
 const ordenAscendente = ref(true);

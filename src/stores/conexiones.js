@@ -16,6 +16,7 @@ export const useApiStore = defineStore("api", () => {
   });
   const loading = ref(false);
   const updating = ref(false);
+  const cargaInicial = ref(false);
   const error = ref(null);
   const cadenas = ref([]);
   const cadenaSeleccionada = ref(0);
@@ -47,6 +48,7 @@ export const useApiStore = defineStore("api", () => {
 
   const getData = async () => {
     loading.value = true;
+    updating.value = true;
     try {
       const response = await axios.post(
         "https://iaudisis.com/audisis/dashboard/adm_dashboard/vista_cobertura",
@@ -81,6 +83,7 @@ export const useApiStore = defineStore("api", () => {
       console.log(error);
     } finally {
       loading.value = false;
+      updating.value = false;
       // moduloListo.value = false;
     }
   };
@@ -279,5 +282,6 @@ export const useApiStore = defineStore("api", () => {
     clientId,
     setClientId,
     moduloListo,
+    cargaInicial,
   };
 });

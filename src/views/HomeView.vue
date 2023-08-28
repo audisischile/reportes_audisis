@@ -9,7 +9,8 @@
   <div class="container" v-else="!useStore.loading">
     <!-- <ModuloFiltrosVue ></ModuloFiltrosVue> -->
     <ModuloFiltrosNew />
-    <div v-if="useStore.updating">
+    <!-- <div v-if="useStore.updating"> -->
+    <div v-if="cargaDatos || useStore.updating">
       <div class="d-flex align-items-center justify-content-center mt-5 updating-container">
         <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
         </div>
@@ -24,9 +25,10 @@
           <CoberturaTotal :apiResponse="useStore.apiResponse" v-if="useStore.apiResponse"></CoberturaTotal>
         </div>
         <div class="col-4">
-          <div class="shadow" style="overflow-y: auto; height: 100%;" v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales">
+          <div class="shadow" style="overflow-y: auto; height: 100%;"
+            v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales">
             <div class="">
-              <GraficoUsuarios class="shadow"/>
+              <GraficoUsuarios class="shadow" />
               <!-- <GraficoUsuarios v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales" 
                   :datosUsuarios="useStore.apiResponse.porcentaje_locales"
                   class="shadow" /> -->
@@ -35,8 +37,11 @@
         </div>
       </div>
       <PermanenciaPorLocal :apiResponse="useStore.apiResponse" v-if="useStore.apiResponse"></PermanenciaPorLocal>
-      <!-- <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria> -->
-      <JornadaDiariaNew />
+      <JornadaDiaria :apiResponse="useStore.apiResponse"></JornadaDiaria>
+      <!-- <JornadaDiariaNew /> -->
+      <div class="text-center">
+        <img src="https://iaudisis.com/audisis//PNG/logo-iaudisis-header.png" class="logo-footer">
+      </div>
     </div>
   </div>
 </template>
@@ -52,11 +57,19 @@ import CoberturaTotal from '@/components/CoberturaTotal.vue'
 import GraficoUsuarios from '@/components/GraficoUsuarios.vue'
 import PermanenciaPorLocal from '@/components/PermanenciaPorLocal.vue'
 import JornadaDiaria from '@/components/JornadaDiaria.vue'
-import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
+// import ModuloFiltrosVue from '@/components/ModuloFiltros.vue'
 import ModuloFiltrosNew from '../components/ModuloFiltrosNew.vue';
-import JornadaDiariaNew from '../components/JornadaDiariaNew.vue';
+// import JornadaDiariaNew from '../components/JornadaDiariaNew.vue';
 
 const useStore = useApiStore();
+
+const cargaDatos = ref(true);
+const timerCargaDatos = () => {
+  setTimeout(() => {
+    cargaDatos.value = false;
+  }, 10000);
+}
+timerCargaDatos();
 
 const props = defineProps({
   clientId: Number,
@@ -107,29 +120,39 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .loading-container {
-  width: 100vw; /* Ocupar todo el ancho del viewport */
-  height: 100vh; /* Ocupar todo el alto del viewport */
+  width: 100vw;
+  /* Ocupar todo el ancho del viewport */
+  height: 100vh;
+  /* Ocupar todo el alto del viewport */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.9); /* Color de fondo blanco con un poco de transparencia para que se vea el contenido detrás, si es necesario */
+  background-color: rgba(255, 255, 255, 0.9);
+  /* Color de fondo blanco con un poco de transparencia para que se vea el contenido detrás, si es necesario */
 }
 
-.updating-container{
-  height: 60vh; /* Ocupar todo el alto del viewport */
+.updating-container {
+  height: 60vh;
+  /* Ocupar todo el alto del viewport */
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.9); /* Color de fondo blanco con un poco de transparencia para que se vea el contenido detrás, si es necesario */
+  background-color: rgba(255, 255, 255, 0.9);
+  /* Color de fondo blanco con un poco de transparencia para que se vea el contenido detrás, si es necesario */
 }
 
-.mensaje{
+.mensaje {
   color: #919191;
   font-weight: bold;
 }
 
-.spinner-border{
+.spinner-border {
   color: #919191;
 }
 
+.logo-footer {
+  width: 7%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
 </style>

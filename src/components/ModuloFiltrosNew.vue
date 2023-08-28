@@ -61,9 +61,10 @@
                                     <a class="dropdown-item" href="#" @click="limpiarLocal">
                                         TODOS LOS LOCALES
                                     </a>
-                                    <a class="dropdown-item" href="#" v-for="item in pdosFiltro" :value="item.ID_Local"
+                                    <a class="dropdown-item" href="#" v-for="item in pdosFiltrados" :value="item.ID_Local"
                                         :key="item.ID_Local" @click="setPDO(item.ID_Cadena, item.ID_Local)">
-                                        {{ reorderText(item.PDO) }}
+                                        <!-- {{ reorderText(item.PDO) }} -->
+                                        {{ item.PDO }}
                                     </a>
                                 </div>
                             </div>
@@ -79,7 +80,7 @@
                         <div class="dropdown dropdown-custom text-center" ref="dropdownUsuario">
                             <button class="btn w-100 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1"
                                 data-bs-toggle="dropdown" aria-expanded="false" :disabled="useStore.updating">
-                                {{ corregirCaracter(textoFiltroUsuario) }}
+                                {{ getUsuarioSeleccionado() }}
                             </button>
                             <div class="dropdown-menu dropdown-menu-custom w-100" aria-labelledby="dropdownMenuButton1">
                                 <form class="mx-2 my-2">
@@ -90,7 +91,7 @@
                                     <a class="dropdown-item" href="#" @click="limpiarUsuarios">
                                         TODOS LOS USUARIOS
                                     </a>
-                                    <a class="dropdown-item" href="#" v-for="item in filteredUsuarios"
+                                    <a class="dropdown-item" href="#" v-for="item in usuariosFiltrados"
                                         :value="item.Id_usuario" :key="item.Id_usuario"
                                         @click="setUsuario(item.ID_Cadena, item.ID_Local, item.Id_usuario)">
                                         {{ corregirCaracter(item.Usuario) }}
@@ -103,14 +104,16 @@
                 </div>
             </div>
         </div>
+        <!-- {{ textoFiltroUsuario }} - {{ getUsuarioSeleccionado() }} -->
     </div>
+    <hr>
+    <!-- {{ getUsuarioName(useStore.usuarioSeleccionado) }} -->
+    <!-- {{ textoFiltroUsuario }} - {{ usuarios }} - {{ filteredUsuarios }} - - > {{ useStore.usuarioSeleccionado }}  -->
     <!-- {{ useStore.cadenaSeleccionada }}
     {{ useStore.localSeleccionado }}
     {{ useStore.usuarioSeleccionado }} -->
-    <hr>
-    <!-- {{ cadenasFiltro }}
-    {{ filteredUsuarios}}
-    <hr> -->
+    <!-- {{ cadenasFiltro }} -->
+    <!-- {{ filteredUsuarios }} -->
     <!-- {{ pdosFiltro }} -->
     <!-- {{ useStore.apiResponse.modulo_filtros }} -->
     <!-- {{ filteredLocales }}
@@ -132,6 +135,17 @@ const dropdownPDO = ref(null);
 const dropdownUsuario = ref(null);
 
 const useStore = useApiStore();
+
+//funcion que detecte cambios en useStore.usuarioSeleccionado, si es 0 que retorne todos los datos de filteredUsuarios, si es distinto de 0 que retorne el "Usuario" del usuario seleccionado
+const getUsuarioSeleccionado = () => {
+    if (useStore.usuarioSeleccionado === 0) {
+        return "Usuarios"
+    } else {
+        const usuario = filteredUsuarios.value.find((item) => item.Id_usuario === useStore.usuarioSeleccionado);
+        return usuario ? usuario.Usuario : 'Usuario';
+    }
+}
+
 
 const getCadenasUnicas = () => {
     const seen = new Set(); // Para mantener un registro de las cadenas ya procesadas
@@ -211,9 +225,6 @@ const getPDOName = (id) => {
     return pdo ? pdo.PDO : 'Local';
 }
 
-//función que busque en useStore.apiResponse.modulo_filtros y retorne los 
-//usuario en base a su id considerando la cadena y local seleccionado si la cadena 
-//y local son 0 retorna todos los usuarios, si la cadena es 0 y el local es distinto de 0 retorna todos los usuarios del local seleccionado
 const getUsuariosPorCadenaLocal = () => {
     const seen = new Set(); // Para mantener un registro de los usuarios ya procesados
 
@@ -235,8 +246,20 @@ const getUsuariosPorCadenaLocal = () => {
                 });
             }
         }
-        // Si cadena es 0 y local no es 0
+        // Si solo cadena es 0 y local no es 0
         else if (useStore.cadenaSeleccionada === 0 && item.ID_Local === useStore.localSeleccionado) {
+            if (!seen.has(item.Id_usuario)) {
+                seen.add(item.Id_usuario);
+                acc.push({
+                    Id_usuario: item.Id_usuario,
+                    Usuario: item.Usuario,
+                    ID_Cadena: item.ID_Cadena,
+                    ID_Local: item.ID_Local
+                });
+            }
+        }
+        // Si solo cadena está seleccionada y local es 0
+        else if (useStore.cadenaSeleccionada === item.ID_Cadena && useStore.localSeleccionado === 0) {
             if (!seen.has(item.Id_usuario)) {
                 seen.add(item.Id_usuario);
                 acc.push({
@@ -266,6 +289,7 @@ const getUsuariosPorCadenaLocal = () => {
     return usuariosUnicos;
 };
 
+
 const filteredUsuarios = ref(getUsuariosPorCadenaLocal());
 
 // Observa cambios en useStore.apiResponse y actualiza filteredUsuarios si cambia
@@ -273,6 +297,26 @@ watch(() => useStore.apiResponse, () => {
     filteredUsuarios.value = getUsuariosPorCadenaLocal();
 });
 
+
+//funcion que retorna el nombre de un usuario en base a su id
+const getUsuarioName = (id) => {
+    const usuario = filteredUsuarios.value.find((item) => item.Id_usuario === id);
+    return usuario ? usuario.Usuario : 'Usuario';
+}
+
+const pdosFiltrados = computed(() => {
+    if (PDOSearchQuery.value) {
+        return pdosFiltro.value.filter(item => item.PDO.toLowerCase().includes(PDOSearchQuery.value.toLowerCase()));
+    }
+    return pdosFiltro.value;
+});
+
+const usuariosFiltrados = computed(() => {
+    if (usuarioSearchQuery.value) {
+        return filteredUsuarios.value.filter(item => item.Usuario.toLowerCase().includes(usuarioSearchQuery.value.toLowerCase()));
+    }
+    return filteredUsuarios.value;
+});
 
 
 
