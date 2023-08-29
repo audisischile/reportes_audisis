@@ -21,13 +21,15 @@
               <td class="usuario">{{ item.nombre ? obtenerPrimerasDosPalabras(corregirCaracter(item.nombre.toUpperCase()))
                 :
                 '' }}</td>
-              <td>
-                <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
+              <td class="progress-container">
+                <!-- <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
                   :aria-valuenow="item.coberturaPromedio" aria-valuemin="0" aria-valuemax="100">
                   <div class="progress-bar"
                     :style="{ width: item.coberturaPromedio + '%', backgroundColor: '#f97013', height: '16px' }"><span
-                      style="color: rgb(230, 230, 230);">{{ aproximar(item.coberturaPromedio) }}%</span> </div>
-                </div>
+                      style="color: rgb(230, 230, 230);">{{ aproximar(item.coberturaPromedio) }}%</span>
+                  </div>
+                </div> -->
+                <ProgressBar :initialValue="aproximar(item.coberturaPromedio)"/>
               </td>
             </tr>
           </tbody>
@@ -41,6 +43,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useApiStore } from '@/stores/conexiones.js';
+import ProgressBar from '@/components/elementos/ProgressBar.vue';
 
 
 const useStore = useApiStore();
@@ -58,7 +61,7 @@ const crearUsuariosCobertura = () => {
   const usuarios = {};
 
   // Check if useStore.apiResponse and useStore.apiResponse.porcentaje_locales exist
-  if(useStore.apiResponse && useStore.apiResponse.porcentaje_locales) {
+  if (useStore.apiResponse && useStore.apiResponse.porcentaje_locales) {
     useStore.apiResponse.porcentaje_locales.forEach((usuario) => {
       // Verificar si el usuario ya existe en el objeto "usuarios"
       if (usuarios.hasOwnProperty(usuario.Usuario)) {
@@ -197,4 +200,11 @@ ordenarUsuariosCobertura();
   font-weight: 600;
   margin-left: 0px;
 }
+
+.usuario {
+    width: 40%; /* o cualquier otra medida que prefieras */
+  }
+  .progress-container {
+    width: 60%; /* o cualquier otra medida que prefieras */
+  }
 </style>
