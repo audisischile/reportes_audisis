@@ -25,13 +25,10 @@
           <CoberturaTotal :apiResponse="useStore.apiResponse" v-if="useStore.apiResponse"></CoberturaTotal>
         </div>
         <div class="col-4">
-          <div class="shadow" style="overflow-y: auto; height: 100%;"
+          <div class="shadow" style="overflow-y: auto;"
             v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales">
             <div class="">
-              <GraficoUsuarios class="shadow" />
-              <!-- <GraficoUsuarios v-if="useStore.apiResponse && useStore.apiResponse.porcentaje_locales" 
-                  :datosUsuarios="useStore.apiResponse.porcentaje_locales"
-                  class="shadow" /> -->
+              <GraficoUsuarios />
             </div>
           </div>
         </div>

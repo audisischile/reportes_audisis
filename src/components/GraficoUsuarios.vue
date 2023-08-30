@@ -1,5 +1,5 @@
 <template>
-  <div style="background-color: red;">
+  <div>
     <div class="card tabla-por-usuario shadow">
       <div style="background-color: #BA0011;" class="row">
         <div class="col-10">
@@ -18,17 +18,8 @@
         <table class="tabla-cobertura">
           <tbody>
             <tr v-for="(item, index) in usuariosCobertura" :key="index">
-              <td class="usuario">{{ item.nombre ? obtenerPrimerasDosPalabras(corregirCaracter(item.nombre.toUpperCase()))
-                :
-                '' }}</td>
+              <td class="usuario">{{ item.nombre ? corregirCaracter(item.nombre.toUpperCase()) : '' }}</td>
               <td class="progress-container">
-                <!-- <div class="progress custom-progress-bar" role="progressbar" aria-label="Example with label"
-                  :aria-valuenow="item.coberturaPromedio" aria-valuemin="0" aria-valuemax="100">
-                  <div class="progress-bar"
-                    :style="{ width: item.coberturaPromedio + '%', backgroundColor: '#f97013', height: '16px' }"><span
-                      style="color: rgb(230, 230, 230);">{{ aproximar(item.coberturaPromedio) }}%</span>
-                  </div>
-                </div> -->
                 <ProgressBar :initialValue="aproximar(item.coberturaPromedio)"/>
               </td>
             </tr>
@@ -60,39 +51,34 @@ function toggleOrden() {
 const crearUsuariosCobertura = () => {
   const usuarios = {};
 
-  // Check if useStore.apiResponse and useStore.apiResponse.porcentaje_locales exist
   if (useStore.apiResponse && useStore.apiResponse.porcentaje_locales) {
     useStore.apiResponse.porcentaje_locales.forEach((usuario) => {
-      // Verificar si el usuario ya existe en el objeto "usuarios"
       if (usuarios.hasOwnProperty(usuario.Usuario)) {
-        // Si existe, actualizar el promedio
         usuarios[usuario.Usuario].locales_completados += usuario.locales_completados;
+        usuarios[usuario.Usuario].locales_iniciados += usuario.locales_iniciados;  // Nueva línea
         usuarios[usuario.Usuario].locales_programadas += usuario.locales_programadas;
         usuarios[usuario.Usuario].diasContados += 1;
       } else {
-        // Si no existe, agregarlo al objeto "usuarios" con los datos del primer día
         usuarios[usuario.Usuario] = {
           nombre: usuario.Usuario,
           locales_completados: usuario.locales_completados,
+          locales_iniciados: usuario.locales_iniciados,  // Nueva línea
           locales_programadas: usuario.locales_programadas,
           diasContados: 1,
         };
       }
     });
 
-    // Calcular el promedio para cada usuario
     for (const key in usuarios) {
       if (usuarios.hasOwnProperty(key)) {
         const usuario = usuarios[key];
-        usuario.coberturaPromedio = (usuario.locales_completados / usuario.locales_programadas) * 100;
+        usuario.coberturaPromedio = ((usuario.locales_completados + usuario.locales_iniciados) / usuario.locales_programadas) * 100;  // Línea modificada
       }
     }
 
-    // Convertir el objeto "usuarios" en un arreglo para mostrarlo en la tabla
     usuariosCobertura.value = Object.values(usuarios);
   }
 };
-
 
 crearUsuariosCobertura();
 
@@ -110,13 +96,16 @@ const aproximar = (numero) => {
   return Math.round(numero * 10) / 10;
 };
 
-function obtenerPrimerasDosPalabras(nombre) {
-  const palabras = nombre.trim().split(' ');
-  const primerasDosPalabras = palabras.slice(0, 2);
-  const resultado = primerasDosPalabras.join(' ');
 
-  return resultado;
+function limitarNombresADosPalabras(nombreCompleto) {
+  const palabras = nombreCompleto.trim().split(' ');
+  if (palabras.length <= 2) {
+    return nombreCompleto;
+  }
+  const primerasDosPalabras = palabras.slice(0, 2).join(' ');
+  return primerasDosPalabras;
 }
+
 
 const corregirCaracter = (texto) => {
   return texto.replace(/Ã¡/g, 'á')
@@ -202,9 +191,9 @@ ordenarUsuariosCobertura();
 }
 
 .usuario {
-    width: 40%; /* o cualquier otra medida que prefieras */
+    width: 45%; /* o cualquier otra medida que prefieras */
   }
   .progress-container {
-    width: 60%; /* o cualquier otra medida que prefieras */
+    width: 55%; /* o cualquier otra medida que prefieras */
   }
 </style>
